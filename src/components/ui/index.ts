@@ -6,3 +6,6 @@ export * from "./label";
 export * from "./progress";
 export * from "./text";
 export * from "./form";
+export * from "./avatar";
+export * from "./tooltip";
+export * from "./card";
