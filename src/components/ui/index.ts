@@ -9,3 +9,4 @@ export * from "./form";
 export * from "./avatar";
 export * from "./tooltip";
 export * from "./card";
+export * from "./select";
