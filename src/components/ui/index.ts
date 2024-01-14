@@ -10,3 +10,4 @@ export * from "./avatar";
 export * from "./tooltip";
 export * from "./card";
 export * from "./select";
+export * from "./alert";
