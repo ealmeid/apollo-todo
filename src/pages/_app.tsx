@@ -1,8 +1,10 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { Inter as FontSans } from "next/font/google";
-
+import { ClerkProvider } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
+
+import { NavBar } from "@/components";
 
 export const fontSans = FontSans({
   subsets: ["latin"],
@@ -11,13 +13,16 @@ export const fontSans = FontSans({
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <main
-      className={cn(
-        "min-h-screen bg-background font-sans antialiased",
-        fontSans.variable
-      )}
-    >
-      <Component {...pageProps} />
-    </main>
+    <ClerkProvider>
+      <main
+        className={cn(
+          "p-8 h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        <NavBar />
+        <Component {...pageProps} />
+      </main>
+    </ClerkProvider>
   );
 }
