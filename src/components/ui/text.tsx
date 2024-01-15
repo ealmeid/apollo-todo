@@ -1,7 +1,17 @@
 import * as React from "react";
 
 export interface TextProps extends React.InputHTMLAttributes<HTMLDivElement> {
-  as: "h1" | "h2" | "h3" | "h4" | "h5" | "p" | "blockquote" | "code" | "lead";
+  as:
+    | "h1"
+    | "h2"
+    | "h3"
+    | "h4"
+    | "h5"
+    | "p"
+    | "blockquote"
+    | "code"
+    | "lead"
+    | "muted";
 }
 
 const Text = React.forwardRef<HTMLDivElement, TextProps>(
@@ -49,6 +59,8 @@ const Text = React.forwardRef<HTMLDivElement, TextProps>(
         );
       case "lead":
         return <p className="text-xl text-muted-foreground">{children}</p>;
+      case "muted":
+        return <p className="text-sm text-muted-foreground">{children}</p>;
       default:
         return <></>;
     }
