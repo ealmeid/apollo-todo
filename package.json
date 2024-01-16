@@ -10,7 +10,9 @@
     "commit": "cz"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.9",
     "@apollo/server": "^4.10.0",
+    "@as-integrations/next": "^3.0.0",
     "@clerk/nextjs": "^4.29.2",
     "@graphql-tools/schema": "^10.0.2",
     "@hookform/resolvers": "^3.3.4",
