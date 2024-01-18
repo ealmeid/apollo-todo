@@ -1,7 +1,7 @@
 import * as React from "react";
 
 export interface TextProps extends React.InputHTMLAttributes<HTMLDivElement> {
-  as:
+  as?:
     | "h1"
     | "h2"
     | "h3"
@@ -15,7 +15,7 @@ export interface TextProps extends React.InputHTMLAttributes<HTMLDivElement> {
 }
 
 const Text = React.forwardRef<HTMLDivElement, TextProps>(
-  ({ className, as, children, ...props }, ref) => {
+  ({ className, as = "p", children, ...props }, ref) => {
     switch (as) {
       case "h1":
         return (
