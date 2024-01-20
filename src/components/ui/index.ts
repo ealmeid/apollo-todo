@@ -11,3 +11,5 @@ export * from "./tooltip";
 export * from "./card";
 export * from "./select";
 export * from "./alert";
+export * from "./skeleton";
+export * from "./dialog";
