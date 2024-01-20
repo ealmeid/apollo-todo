@@ -1,6 +1,6 @@
 import { CodegenConfig } from "@graphql-codegen/cli";
 import { printSchema } from "graphql";
-import { schema } from "../src/graphql";
+import { schema } from "../src/graphql/schema";
 
 const config: CodegenConfig = {
   overwrite: true,
