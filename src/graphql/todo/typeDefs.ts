@@ -8,6 +8,10 @@ export const typeDefs = gql`
     isCompleted: Boolean!
   }
 
+  type Query {
+    getTodosByUser: [Todo!]!
+  }
+
   type Mutation {
     createTodo(title: String!): Todo
   }
