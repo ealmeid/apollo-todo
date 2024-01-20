@@ -5,7 +5,7 @@ import { schema } from "../src/graphql/schema";
 const config: CodegenConfig = {
   overwrite: true,
   schema: printSchema(schema),
-  documents: ["./src/pages/**/*.tsx", "./src/pages/**/*.graphql"],
+  documents: ["./src/graphql/**/*.tsx", "./src/graphql/**/*.graphql"],
   generates: {
     "src/graphql/types/client.ts": {
       plugins: [
