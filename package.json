@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "commit": "cz"
+    "commit": "cz",
+    "codegen:client": "graphql-codegen --config codegen/client.ts",
+    "codegen:server": "graphql-codegen --config codegen/server.ts",
+    "codegen": "bun codegen:client && bun codegen:server"
   },
   "dependencies": {
     "@apollo/client": "^3.8.9",
