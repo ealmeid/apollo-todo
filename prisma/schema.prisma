@@ -26,17 +26,25 @@ model Task {
   description String
   isCompleted Boolean @default(false)
   userId      String
-  listId      String?
 
-  user User  @relation(fields: [userId], references: [id])
-  List List? @relation(fields: [listId], references: [id])
+  lists TaskToList[]
+  user  User         @relation(fields: [userId], references: [id])
 }
 
 model List {
   id     String @id @default(uuid())
-  name   String
-  tasks  Task[]
+  title  String
   userId String
 
-  user User @relation(fields: [userId], references: [id])
+  tasks TaskToList[]
+  user  User         @relation(fields: [userId], references: [id])
+}
+
+model TaskToList {
+  task   Task   @relation(fields: [taskId], references: [id])
+  taskId String
+  list   List   @relation(fields: [listId], references: [id])
+  listId String
+
+  @@id([taskId, listId])
 }
