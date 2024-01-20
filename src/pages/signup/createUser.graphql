@@ -1,0 +1,5 @@
+mutation CreateUser($clerkId: String!) {
+  createUser(clerkId: $clerkId) {
+    id
+  }
+}
