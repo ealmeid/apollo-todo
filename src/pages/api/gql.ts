@@ -1,10 +1,8 @@
 import { ApolloServer } from "@apollo/server";
-import { PrismaClient } from "@prisma/client";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
+import prisma from "@/lib/prisma";
 
 import { schema } from "./graphql";
-
-const prisma = new PrismaClient();
 
 const server = new ApolloServer({ schema });
 
