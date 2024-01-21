@@ -3,14 +3,15 @@ import gql from "graphql-tag";
 export const typeDefs = gql`
   type List {
     id: ID!
-    name: String!
+    title: String!
+    taskIds: [ID!]!
   }
 
   type Query {
-    getAllLists: [List]
+    getListsByUser: [List!]!
   }
 
   type Mutation {
-    createList(name: String!): List
+    createList(title: String!): List!
   }
 `;

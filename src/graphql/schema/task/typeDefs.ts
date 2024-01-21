@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const typeDefs = gql`
-  type Todo {
+  type Task {
     id: ID!
     title: String!
     description: String!
@@ -9,10 +9,11 @@ export const typeDefs = gql`
   }
 
   type Query {
-    getTodosByUser: [Todo!]!
+    getTasksByUser: [Task!]!
   }
 
   type Mutation {
-    createTodo(title: String!): Todo
+    createTask(title: String!): Task
+    addTasksToLists(taskIds: [ID!]!, listIds: [ID!]!): [Task!]!
   }
 `;

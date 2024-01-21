@@ -1,17 +1,19 @@
-export const createList = async (
-  _parent: any,
-  args: any,
-  context: any,
-  _info: any
+import { MutationResolvers } from "@/graphql/types/server";
+
+export const createList: MutationResolvers["createList"] = async (
+  _parent,
+  { title },
+  context,
+  _info
 ) => {
   const { id: userId } = context.user;
 
   const list = await context.prisma.list.create({
     data: {
-      name: args.name,
+      title,
       userId,
     },
   });
 
-  return list;
+  return { ...list, taskIds: [] };
 };

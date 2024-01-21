@@ -1,6 +1,6 @@
 import { MutationResolvers } from "@/graphql/types/server";
 
-export const createTodo: MutationResolvers["createTodo"] = async (
+export const createTask: MutationResolvers["createTask"] = async (
   _parent,
   { title },
   { prisma, user },
@@ -8,7 +8,7 @@ export const createTodo: MutationResolvers["createTodo"] = async (
 ) => {
   const { id: userId } = user;
 
-  const todo = await prisma.todo.create({
+  const todo = await prisma.task.create({
     data: {
       userId,
       title,
