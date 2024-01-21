@@ -1,7 +1,0 @@
-query GetTodosByUser {
-  getTodosByUser {
-    id
-    title
-    isCompleted
-  }
-}

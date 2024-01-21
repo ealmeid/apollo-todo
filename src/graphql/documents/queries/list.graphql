@@ -1,0 +1,7 @@
+query GetListsByUser {
+  getListsByUser {
+    id
+    title
+    taskIds
+  }
+}

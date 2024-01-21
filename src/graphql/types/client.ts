@@ -20,23 +20,31 @@ export type Scalars = {
 export type List = {
   __typename?: 'List';
   id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
+  taskIds: Array<Scalars['ID']['output']>;
+  title: Scalars['String']['output'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createList: Maybe<List>;
-  createTodo: Maybe<Todo>;
+  addTasksToLists: Array<Task>;
+  createList: List;
+  createTask: Maybe<Task>;
   createUser: Maybe<User>;
 };
 
 
-export type MutationCreateListArgs = {
-  name: Scalars['String']['input'];
+export type MutationAddTasksToListsArgs = {
+  listIds: Array<Scalars['ID']['input']>;
+  taskIds: Array<Scalars['ID']['input']>;
 };
 
 
-export type MutationCreateTodoArgs = {
+export type MutationCreateListArgs = {
+  title: Scalars['String']['input'];
+};
+
+
+export type MutationCreateTaskArgs = {
   title: Scalars['String']['input'];
 };
 
@@ -47,12 +55,12 @@ export type MutationCreateUserArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  getAllLists: Maybe<Array<Maybe<List>>>;
-  getTodosByUser: Array<Todo>;
+  getListsByUser: Array<List>;
+  getTasksByUser: Array<Task>;
 };
 
-export type Todo = {
-  __typename?: 'Todo';
+export type Task = {
+  __typename?: 'Task';
   description: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   isCompleted: Scalars['Boolean']['output'];
@@ -66,17 +74,27 @@ export type User = {
   username: Scalars['String']['output'];
 };
 
-export type CreateTodoMutationVariables = Exact<{
+export type CreateListMutationVariables = Exact<{
   title: Scalars['String']['input'];
 }>;
 
 
-export type CreateTodoMutation = { __typename?: 'Mutation', createTodo: { __typename?: 'Todo', id: string } | null };
+export type CreateListMutation = { __typename?: 'Mutation', createList: { __typename?: 'List', id: string, title: string } };
 
-export type GetTodosByUserQueryVariables = Exact<{ [key: string]: never; }>;
+export type CreateTaskMutationVariables = Exact<{
+  title: Scalars['String']['input'];
+}>;
 
 
-export type GetTodosByUserQuery = { __typename?: 'Query', getTodosByUser: Array<{ __typename?: 'Todo', id: string, title: string, isCompleted: boolean }> };
+export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, title: string, isCompleted: boolean } | null };
+
+export type AddTasksToListsMutationVariables = Exact<{
+  taskIds: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+  listIds: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+}>;
+
+
+export type AddTasksToListsMutation = { __typename?: 'Mutation', addTasksToLists: Array<{ __typename?: 'Task', id: string, title: string, isCompleted: boolean }> };
 
 export type CreateUserMutationVariables = Exact<{
   clerkId: Scalars['String']['input'];
@@ -85,81 +103,122 @@ export type CreateUserMutationVariables = Exact<{
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string } | null };
 
+export type GetListsByUserQueryVariables = Exact<{ [key: string]: never; }>;
 
-export const CreateTodoDocument = gql`
-    mutation CreateTodo($title: String!) {
-  createTodo(title: $title) {
+
+export type GetListsByUserQuery = { __typename?: 'Query', getListsByUser: Array<{ __typename?: 'List', id: string, title: string, taskIds: Array<string> }> };
+
+export type GetTasksByUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTasksByUserQuery = { __typename?: 'Query', getTasksByUser: Array<{ __typename?: 'Task', id: string, title: string, isCompleted: boolean }> };
+
+
+export const CreateListDocument = gql`
+    mutation CreateList($title: String!) {
+  createList(title: $title) {
     id
+    title
   }
 }
     `;
-export type CreateTodoMutationFn = Apollo.MutationFunction<CreateTodoMutation, CreateTodoMutationVariables>;
+export type CreateListMutationFn = Apollo.MutationFunction<CreateListMutation, CreateListMutationVariables>;
 
 /**
- * __useCreateTodoMutation__
+ * __useCreateListMutation__
  *
- * To run a mutation, you first call `useCreateTodoMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateTodoMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateListMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateListMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createTodoMutation, { data, loading, error }] = useCreateTodoMutation({
+ * const [createListMutation, { data, loading, error }] = useCreateListMutation({
  *   variables: {
  *      title: // value for 'title'
  *   },
  * });
  */
-export function useCreateTodoMutation(baseOptions?: Apollo.MutationHookOptions<CreateTodoMutation, CreateTodoMutationVariables>) {
+export function useCreateListMutation(baseOptions?: Apollo.MutationHookOptions<CreateListMutation, CreateListMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateTodoMutation, CreateTodoMutationVariables>(CreateTodoDocument, options);
+        return Apollo.useMutation<CreateListMutation, CreateListMutationVariables>(CreateListDocument, options);
       }
-export type CreateTodoMutationHookResult = ReturnType<typeof useCreateTodoMutation>;
-export type CreateTodoMutationResult = Apollo.MutationResult<CreateTodoMutation>;
-export type CreateTodoMutationOptions = Apollo.BaseMutationOptions<CreateTodoMutation, CreateTodoMutationVariables>;
-export const GetTodosByUserDocument = gql`
-    query GetTodosByUser {
-  getTodosByUser {
+export type CreateListMutationHookResult = ReturnType<typeof useCreateListMutation>;
+export type CreateListMutationResult = Apollo.MutationResult<CreateListMutation>;
+export type CreateListMutationOptions = Apollo.BaseMutationOptions<CreateListMutation, CreateListMutationVariables>;
+export const CreateTaskDocument = gql`
+    mutation CreateTask($title: String!) {
+  createTask(title: $title) {
     id
     title
     isCompleted
   }
 }
     `;
+export type CreateTaskMutationFn = Apollo.MutationFunction<CreateTaskMutation, CreateTaskMutationVariables>;
 
 /**
- * __useGetTodosByUserQuery__
+ * __useCreateTaskMutation__
  *
- * To run a query within a React component, call `useGetTodosByUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTodosByUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useCreateTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useGetTodosByUserQuery({
+ * const [createTaskMutation, { data, loading, error }] = useCreateTaskMutation({
  *   variables: {
+ *      title: // value for 'title'
  *   },
  * });
  */
-export function useGetTodosByUserQuery(baseOptions?: Apollo.QueryHookOptions<GetTodosByUserQuery, GetTodosByUserQueryVariables>) {
+export function useCreateTaskMutation(baseOptions?: Apollo.MutationHookOptions<CreateTaskMutation, CreateTaskMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTodosByUserQuery, GetTodosByUserQueryVariables>(GetTodosByUserDocument, options);
+        return Apollo.useMutation<CreateTaskMutation, CreateTaskMutationVariables>(CreateTaskDocument, options);
       }
-export function useGetTodosByUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTodosByUserQuery, GetTodosByUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTodosByUserQuery, GetTodosByUserQueryVariables>(GetTodosByUserDocument, options);
-        }
-export function useGetTodosByUserSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTodosByUserQuery, GetTodosByUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetTodosByUserQuery, GetTodosByUserQueryVariables>(GetTodosByUserDocument, options);
-        }
-export type GetTodosByUserQueryHookResult = ReturnType<typeof useGetTodosByUserQuery>;
-export type GetTodosByUserLazyQueryHookResult = ReturnType<typeof useGetTodosByUserLazyQuery>;
-export type GetTodosByUserSuspenseQueryHookResult = ReturnType<typeof useGetTodosByUserSuspenseQuery>;
-export type GetTodosByUserQueryResult = Apollo.QueryResult<GetTodosByUserQuery, GetTodosByUserQueryVariables>;
+export type CreateTaskMutationHookResult = ReturnType<typeof useCreateTaskMutation>;
+export type CreateTaskMutationResult = Apollo.MutationResult<CreateTaskMutation>;
+export type CreateTaskMutationOptions = Apollo.BaseMutationOptions<CreateTaskMutation, CreateTaskMutationVariables>;
+export const AddTasksToListsDocument = gql`
+    mutation AddTasksToLists($taskIds: [ID!]!, $listIds: [ID!]!) {
+  addTasksToLists(taskIds: $taskIds, listIds: $listIds) {
+    id
+    title
+    isCompleted
+  }
+}
+    `;
+export type AddTasksToListsMutationFn = Apollo.MutationFunction<AddTasksToListsMutation, AddTasksToListsMutationVariables>;
+
+/**
+ * __useAddTasksToListsMutation__
+ *
+ * To run a mutation, you first call `useAddTasksToListsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddTasksToListsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addTasksToListsMutation, { data, loading, error }] = useAddTasksToListsMutation({
+ *   variables: {
+ *      taskIds: // value for 'taskIds'
+ *      listIds: // value for 'listIds'
+ *   },
+ * });
+ */
+export function useAddTasksToListsMutation(baseOptions?: Apollo.MutationHookOptions<AddTasksToListsMutation, AddTasksToListsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddTasksToListsMutation, AddTasksToListsMutationVariables>(AddTasksToListsDocument, options);
+      }
+export type AddTasksToListsMutationHookResult = ReturnType<typeof useAddTasksToListsMutation>;
+export type AddTasksToListsMutationResult = Apollo.MutationResult<AddTasksToListsMutation>;
+export type AddTasksToListsMutationOptions = Apollo.BaseMutationOptions<AddTasksToListsMutation, AddTasksToListsMutationVariables>;
 export const CreateUserDocument = gql`
     mutation CreateUser($clerkId: String!) {
   createUser(clerkId: $clerkId) {
@@ -193,3 +252,85 @@ export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
 export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
+export const GetListsByUserDocument = gql`
+    query GetListsByUser {
+  getListsByUser {
+    id
+    title
+    taskIds
+  }
+}
+    `;
+
+/**
+ * __useGetListsByUserQuery__
+ *
+ * To run a query within a React component, call `useGetListsByUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetListsByUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetListsByUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetListsByUserQuery(baseOptions?: Apollo.QueryHookOptions<GetListsByUserQuery, GetListsByUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetListsByUserQuery, GetListsByUserQueryVariables>(GetListsByUserDocument, options);
+      }
+export function useGetListsByUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetListsByUserQuery, GetListsByUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetListsByUserQuery, GetListsByUserQueryVariables>(GetListsByUserDocument, options);
+        }
+export function useGetListsByUserSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetListsByUserQuery, GetListsByUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetListsByUserQuery, GetListsByUserQueryVariables>(GetListsByUserDocument, options);
+        }
+export type GetListsByUserQueryHookResult = ReturnType<typeof useGetListsByUserQuery>;
+export type GetListsByUserLazyQueryHookResult = ReturnType<typeof useGetListsByUserLazyQuery>;
+export type GetListsByUserSuspenseQueryHookResult = ReturnType<typeof useGetListsByUserSuspenseQuery>;
+export type GetListsByUserQueryResult = Apollo.QueryResult<GetListsByUserQuery, GetListsByUserQueryVariables>;
+export const GetTasksByUserDocument = gql`
+    query GetTasksByUser {
+  getTasksByUser {
+    id
+    title
+    isCompleted
+  }
+}
+    `;
+
+/**
+ * __useGetTasksByUserQuery__
+ *
+ * To run a query within a React component, call `useGetTasksByUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTasksByUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTasksByUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTasksByUserQuery(baseOptions?: Apollo.QueryHookOptions<GetTasksByUserQuery, GetTasksByUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTasksByUserQuery, GetTasksByUserQueryVariables>(GetTasksByUserDocument, options);
+      }
+export function useGetTasksByUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTasksByUserQuery, GetTasksByUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTasksByUserQuery, GetTasksByUserQueryVariables>(GetTasksByUserDocument, options);
+        }
+export function useGetTasksByUserSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTasksByUserQuery, GetTasksByUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTasksByUserQuery, GetTasksByUserQueryVariables>(GetTasksByUserDocument, options);
+        }
+export type GetTasksByUserQueryHookResult = ReturnType<typeof useGetTasksByUserQuery>;
+export type GetTasksByUserLazyQueryHookResult = ReturnType<typeof useGetTasksByUserLazyQuery>;
+export type GetTasksByUserSuspenseQueryHookResult = ReturnType<typeof useGetTasksByUserSuspenseQuery>;
+export type GetTasksByUserQueryResult = Apollo.QueryResult<GetTasksByUserQuery, GetTasksByUserQueryVariables>;

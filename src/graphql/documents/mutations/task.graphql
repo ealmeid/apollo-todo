@@ -1,0 +1,15 @@
+mutation CreateTask($title: String!) {
+  createTask(title: $title) {
+    id
+    title
+    isCompleted
+  }
+}
+
+mutation AddTasksToLists($taskIds: [ID!]!, $listIds: [ID!]!) {
+  addTasksToLists(taskIds: $taskIds, listIds: $listIds) {
+    id
+    title
+    isCompleted
+  }
+}

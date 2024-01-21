@@ -1,0 +1,6 @@
+mutation CreateList($title: String!) {
+  createList(title: $title) {
+    id
+    title
+  }
+}
