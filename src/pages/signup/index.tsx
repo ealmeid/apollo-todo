@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components";
 import { routes } from "@/routes";
+import { useCreateUserMutation } from "@/graphql/types/client";
 
 const formSchema = z.object({
   username: z.string().min(1, {
@@ -29,6 +30,7 @@ const formSchema = z.object({
 
 export default function Signup() {
   const { isLoaded, signUp, setActive } = useSignUp();
+  const [createUser] = useCreateUserMutation();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -48,6 +50,9 @@ export default function Signup() {
         password: values.password,
       })
       .then((result) => {
+        // TODO: Need to make this guaranteed to succeed
+        const clerkId = (result.createdUserId as string).split("_")[1];
+        createUser({ variables: { clerkId } });
         setActive({ session: result.createdSessionId });
         router.push(routes.home);
       });
