@@ -13,3 +13,4 @@ export * from "./select";
 export * from "./alert";
 export * from "./skeleton";
 export * from "./dialog";
+export * from "./sonner";
