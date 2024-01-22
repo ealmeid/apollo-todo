@@ -7,6 +7,7 @@ import {
   useGetTasksByUserQuery,
 } from "@/graphql/types/client";
 import { AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 export const Home = () => {
   const [todoValue, setTodoValue] = useState("");
@@ -14,6 +15,9 @@ export const Home = () => {
   const { data, loading, error } = useGetTasksByUserQuery();
 
   const [createTodo] = useCreateTaskMutation({
+    onCompleted: ({ createTask: task }) => {
+      toast(`Task \"${task.title}\" has been created!`);
+    },
     update(cache, { data }) {
       const newTodo = data?.createTask;
       const existingTasks = cache.readQuery<GetTasksByUserQuery>({

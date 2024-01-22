@@ -5,6 +5,7 @@ import { ApolloProvider } from "@apollo/client";
 import { ClerkProvider } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { createApolloClient } from "@/lib/apollo";
+import { Toaster } from "@/components/ui/sonner";
 
 import { NavBar } from "@/components";
 
@@ -25,6 +26,7 @@ export default function App({ Component, pageProps }: AppProps) {
             fontSans.variable
           )}
         >
+          <Toaster />
           <NavBar />
           <Component {...pageProps} />
         </main>
