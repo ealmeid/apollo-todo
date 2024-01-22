@@ -13,7 +13,8 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    createTask(title: String!): Task
+    createTask(title: String!): Task!
+    deleteTask(id: ID!): ID!
     addTasksToLists(taskIds: [ID!]!, listIds: [ID!]!): [Task!]!
   }
 `;

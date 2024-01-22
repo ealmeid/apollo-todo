@@ -28,8 +28,9 @@ export type Mutation = {
   __typename?: 'Mutation';
   addTasksToLists: Array<Task>;
   createList: List;
-  createTask?: Maybe<Task>;
+  createTask: Task;
   createUser?: Maybe<User>;
+  deleteTask: Scalars['ID']['output'];
 };
 
 
@@ -51,6 +52,11 @@ export type MutationCreateTaskArgs = {
 
 export type MutationCreateUserArgs = {
   clerkId: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteTaskArgs = {
+  id: Scalars['ID']['input'];
 };
 
 export type Query = {
@@ -177,8 +183,9 @@ export type ListResolvers<ContextType = ApolloContext, ParentType extends Resolv
 export type MutationResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   addTasksToLists?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationAddTasksToListsArgs, 'listIds' | 'taskIds'>>;
   createList?: Resolver<ResolversTypes['List'], ParentType, ContextType, RequireFields<MutationCreateListArgs, 'title'>>;
-  createTask?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'title'>>;
+  createTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'title'>>;
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'clerkId'>>;
+  deleteTask?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'id'>>;
 };
 
 export type QueryResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
