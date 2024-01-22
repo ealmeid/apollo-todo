@@ -6,6 +6,10 @@ mutation CreateTask($title: String!) {
   }
 }
 
+mutation DeleteTask($id: ID!) {
+  deleteTask(id: $id)
+}
+
 mutation AddTasksToLists($taskIds: [ID!]!, $listIds: [ID!]!) {
   addTasksToLists(taskIds: $taskIds, listIds: $listIds) {
     id

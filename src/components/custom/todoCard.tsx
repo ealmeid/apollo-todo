@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   useAddTasksToListsMutation,
+  useDeleteTaskMutation,
   useGetListsByUserQuery,
 } from "@/graphql/types/client";
 import {
@@ -12,6 +13,7 @@ import {
   Button,
   Text,
 } from "..";
+import { Trash2 } from "lucide-react";
 
 export interface TodoCardProps extends React.HTMLAttributes<HTMLDivElement> {
   id: string;
@@ -22,6 +24,15 @@ export const TodoCard = ({ id, name, ...props }: TodoCardProps) => {
   const [selectedLists, setSelectedLists] = useState<string[]>([]);
 
   const [addTaskToLists] = useAddTasksToListsMutation();
+
+  const [deleteTask] = useDeleteTaskMutation({
+    variables: {
+      id,
+    },
+    update(cache) {
+      cache.evict({ id: cache.identify({ __typename: "Task", id }) });
+    },
+  });
 
   const { data } = useGetListsByUserQuery({
     onCompleted: ({ getListsByUser }) => {
@@ -37,7 +48,7 @@ export const TodoCard = ({ id, name, ...props }: TodoCardProps) => {
       <DialogTrigger>
         <div
           key={id}
-          className="flex items-center gap-2 w-full px-6 py-4 border-slate-200 border rounded-md min-h-16 hover:bg-slate-50"
+          className="bg-slate-100 flex items-center gap-2 w-full px-6 py-4 border-slate-200 border rounded-md min-h-16 hover:bg-slate-50"
         >
           <Checkbox className="w-6 h-6" onClick={(e) => e.stopPropagation()} />
           <div>{name}</div>
@@ -46,6 +57,15 @@ export const TodoCard = ({ id, name, ...props }: TodoCardProps) => {
       <DialogContent className="p-6">
         <div className="flex flex-col gap-6 max-h-[300px] p-4 overflow-y-auto">
           <Text as="h3">{name}</Text>
+          <Button
+            variant="destructive"
+            className="flex gap-2"
+            onClick={() => deleteTask()}
+          >
+            <Trash2 className="w-4 h-4">Delete Task</Trash2>
+            Delete Task
+          </Button>
+          <Text as="p">Created:</Text>
           {data?.getListsByUser.map((list) => (
             <div
               key={list.id}
