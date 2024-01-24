@@ -9,6 +9,7 @@ export const typeDefs = gql`
   }
 
   type Query {
+    getTaskById(id: ID!): Task
     getTasksByUser: [Task!]!
   }
 
