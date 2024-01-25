@@ -23,7 +23,9 @@ export const NavBar = () => {
       <NextLink href="/">
         <HomeIcon />
       </NextLink>
-      <GanttChartSquare />
+      <NextLink href="/manage">
+        <GanttChartSquare />
+      </NextLink>
       {isSignedIn ? (
         <NextLink href="/profile">
           <User2 />
