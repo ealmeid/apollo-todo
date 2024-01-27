@@ -52,7 +52,7 @@ const TodoCardComponent = React.forwardRef<HTMLDivElement, TodoCardProps>(
           <div
             ref={ref}
             key={id}
-            className="bg-slate-100 flex items-center gap-2 w-full px-6 py-4 border-slate-200 border rounded-md min-h-16 hover:bg-slate-50"
+            className="bg-slate-100 flex items-center gap-4 w-full px-6 py-4 border-slate-200 border rounded-md min-h-16 hover:bg-slate-50"
           >
             <Checkbox
               className="w-6 h-6"
@@ -64,16 +64,14 @@ const TodoCardComponent = React.forwardRef<HTMLDivElement, TodoCardProps>(
         <DialogContent className="p-6">
           <div className="flex flex-col gap-6 max-h-[300px] p-4 overflow-y-auto">
             <Text as="h3">{name}</Text>
-            <Button
-              variant="destructive"
-              className="flex gap-2"
-              onClick={() => deleteTask()}
-            >
-              <Trash2 className="w-4 h-4">Delete Task</Trash2>
-              Delete Task
-            </Button>
-            <Text as="p">Created:</Text>
-            {data?.getListsByUser.map((list) => (
+            {/* Use the description provided by the task later */}
+            <Text as="muted">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero
+              aliquid incidunt natus sint nemo error quasi consequuntur,
+              explicabo neque aperiam eveniet placeat aliquam, non ducimus
+              praesentium id assumenda tempora optio.
+            </Text>
+            {/* {data?.getListsByUser.map((list) => (
               <div
                 key={list.id}
                 className="shadow-md p-4 flex items-center gap-6 rounded-md"
@@ -84,20 +82,32 @@ const TodoCardComponent = React.forwardRef<HTMLDivElement, TodoCardProps>(
                   onClick={() => setSelectedLists([...selectedLists, list.id])}
                 />
               </div>
-            ))}
+            ))} */}
           </div>
-          <Button
-            onClick={() => {
-              addTaskToLists({
-                variables: {
-                  taskIds: [id],
-                  listIds: selectedLists,
-                },
-              });
-            }}
-          >
-            Add Tasks to Lists
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              className="min-w-1/2 w-full"
+              onClick={() => {
+                addTaskToLists({
+                  variables: {
+                    taskIds: [id],
+                    listIds: selectedLists,
+                  },
+                });
+              }}
+            >
+              Add Tasks to Lists
+            </Button>
+
+            <Button
+              className="min-w-1/2 w-full flex gap-2"
+              variant="destructive"
+              onClick={() => deleteTask()}
+            >
+              <Trash2 className="w-4 h-4">Delete Task</Trash2>
+              Delete Task
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     );
