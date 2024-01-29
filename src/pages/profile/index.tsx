@@ -1,6 +1,6 @@
+import * as z from "zod";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { Button, Text } from "@/components";
-import * as z from "zod";
 import { useRouter } from "next/router";
 import { routes } from "@/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,10 +15,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useApolloClient } from "@apollo/client";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const Profile = () => {
   const { user } = useUser();
   const { signOut } = useAuth();
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const apolloClient = useApolloClient();
   const router = useRouter();
 
   const formSchema = z.object({
@@ -34,10 +39,16 @@ const Profile = () => {
     },
   });
 
-  const onSignOut = (e: any) => {
+  const onSignOut = async (e: any) => {
     e.preventDefault();
-    signOut();
-    router.push(routes.home);
+    await signOut()
+      .then(() => {
+        apolloClient.resetStore();
+        router.push(routes.home);
+      })
+      .catch(() => {
+        setIsSigningOut(false);
+      });
   };
 
   return (
@@ -68,9 +79,16 @@ const Profile = () => {
           <Button
             className="w-full"
             variant="outline"
-            onClick={(e) => onSignOut(e)}
+            onClick={async (e) => {
+              setIsSigningOut(true);
+              await onSignOut(e);
+            }}
           >
-            Sign out
+            {isSigningOut ? (
+              <Loader2 className="animate-spin"></Loader2>
+            ) : (
+              "Sign out"
+            )}
           </Button>
         </form>
       </Form>
