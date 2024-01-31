@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 
 import { schema } from "../../graphql/schema";
 import type { PrismaClient } from "@prisma/client";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { parse } from "cookie";
 
 export type ApolloContext = {
@@ -14,6 +14,14 @@ export type ApolloContext = {
 
 const server = new ApolloServer<ApolloContext>({ schema });
 
+const checkToken = (token: string) => {
+  const decoded = jwt.decode(token) as JwtPayload;
+  if (decoded && (decoded.exp as number) * 1000 < Date.now()) {
+    return "";
+  }
+  return token;
+};
+
 export default startServerAndCreateNextHandler(server, {
   // ...
 
@@ -21,10 +29,14 @@ export default startServerAndCreateNextHandler(server, {
     const cookies = parse(headers.cookie || "");
     const token = cookies["__session"] ?? "";
 
-    // TODO: Check or use types from clerk if available
-    const user = { id: (jwt.decode(token)?.sub as string) ?? "" };
+    const user: { id: string } = { id: "" };
 
-    user.id = (user?.id).split("_")[1];
+    const validToken = checkToken(token);
+
+    if (validToken) {
+      const subValue = (jwt.decode(validToken)?.sub as string) ?? "";
+      user.id = subValue.split("_")[1] ?? "";
+    }
 
     return { prisma, user };
   },
