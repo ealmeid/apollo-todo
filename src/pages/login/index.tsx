@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components";
 import { routes } from "@/routes";
+import { useApolloClient } from "@apollo/client";
 
 const formSchema = z.object({
   username: z.string().min(1, {
@@ -29,6 +30,7 @@ const formSchema = z.object({
 });
 
 export default function Login() {
+  const apolloClient = useApolloClient();
   const { isLoaded, signIn, setActive } = useSignIn();
   const router = useRouter();
 
@@ -51,6 +53,7 @@ export default function Login() {
       .then((result: any) => {
         if (result.status === "complete") {
           setActive({ session: result.createdSessionId });
+          apolloClient.resetStore();
           router.push(routes.home);
         }
       })
