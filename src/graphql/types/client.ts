@@ -17,6 +17,13 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type EditTaskInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  isCompleted?: InputMaybe<Scalars['Boolean']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type List = {
   __typename?: 'List';
   id: Scalars['ID']['output'];
@@ -29,8 +36,9 @@ export type Mutation = {
   addTasksToLists: Array<Task>;
   createList: List;
   createTask: Task;
-  createUser: Maybe<User>;
+  createUser?: Maybe<User>;
   deleteTask: Scalars['ID']['output'];
+  editTask: Task;
 };
 
 
@@ -59,10 +67,21 @@ export type MutationDeleteTaskArgs = {
   id: Scalars['ID']['input'];
 };
 
+
+export type MutationEditTaskArgs = {
+  input: EditTaskInput;
+};
+
 export type Query = {
   __typename?: 'Query';
   getListsByUser: Array<List>;
+  getTaskById?: Maybe<Task>;
   getTasksByUser: Array<Task>;
+};
+
+
+export type QueryGetTaskByIdArgs = {
+  id: Scalars['ID']['input'];
 };
 
 export type Task = {
@@ -109,12 +128,19 @@ export type AddTasksToListsMutationVariables = Exact<{
 
 export type AddTasksToListsMutation = { __typename?: 'Mutation', addTasksToLists: Array<{ __typename?: 'Task', id: string, title: string, isCompleted: boolean }> };
 
+export type EditTaskMutationVariables = Exact<{
+  input: EditTaskInput;
+}>;
+
+
+export type EditTaskMutation = { __typename?: 'Mutation', editTask: { __typename?: 'Task', id: string, title: string, isCompleted: boolean, description: string } };
+
 export type CreateUserMutationVariables = Exact<{
   clerkId: Scalars['String']['input'];
 }>;
 
 
-export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string } | null };
+export type CreateUserMutation = { __typename?: 'Mutation', createUser?: { __typename?: 'User', id: string } | null };
 
 export type GetListsByUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -263,6 +289,42 @@ export function useAddTasksToListsMutation(baseOptions?: Apollo.MutationHookOpti
 export type AddTasksToListsMutationHookResult = ReturnType<typeof useAddTasksToListsMutation>;
 export type AddTasksToListsMutationResult = Apollo.MutationResult<AddTasksToListsMutation>;
 export type AddTasksToListsMutationOptions = Apollo.BaseMutationOptions<AddTasksToListsMutation, AddTasksToListsMutationVariables>;
+export const EditTaskDocument = gql`
+    mutation EditTask($input: EditTaskInput!) {
+  editTask(input: $input) {
+    id
+    title
+    isCompleted
+    description
+  }
+}
+    `;
+export type EditTaskMutationFn = Apollo.MutationFunction<EditTaskMutation, EditTaskMutationVariables>;
+
+/**
+ * __useEditTaskMutation__
+ *
+ * To run a mutation, you first call `useEditTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editTaskMutation, { data, loading, error }] = useEditTaskMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditTaskMutation(baseOptions?: Apollo.MutationHookOptions<EditTaskMutation, EditTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditTaskMutation, EditTaskMutationVariables>(EditTaskDocument, options);
+      }
+export type EditTaskMutationHookResult = ReturnType<typeof useEditTaskMutation>;
+export type EditTaskMutationResult = Apollo.MutationResult<EditTaskMutation>;
+export type EditTaskMutationOptions = Apollo.BaseMutationOptions<EditTaskMutation, EditTaskMutationVariables>;
 export const CreateUserDocument = gql`
     mutation CreateUser($clerkId: String!) {
   createUser(clerkId: $clerkId) {

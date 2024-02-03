@@ -17,6 +17,13 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type EditTaskInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  isCompleted?: InputMaybe<Scalars['Boolean']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type List = {
   __typename?: 'List';
   id: Scalars['ID']['output'];
@@ -31,6 +38,7 @@ export type Mutation = {
   createTask: Task;
   createUser?: Maybe<User>;
   deleteTask: Scalars['ID']['output'];
+  editTask: Task;
 };
 
 
@@ -59,10 +67,21 @@ export type MutationDeleteTaskArgs = {
   id: Scalars['ID']['input'];
 };
 
+
+export type MutationEditTaskArgs = {
+  input: EditTaskInput;
+};
+
 export type Query = {
   __typename?: 'Query';
   getListsByUser: Array<List>;
+  getTaskById?: Maybe<Task>;
   getTasksByUser: Array<Task>;
+};
+
+
+export type QueryGetTaskByIdArgs = {
+  id: Scalars['ID']['input'];
 };
 
 export type Task = {
@@ -152,6 +171,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  EditTaskInput: EditTaskInput;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   List: ResolverTypeWrapper<List>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -164,6 +184,7 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
+  EditTaskInput: EditTaskInput;
   ID: Scalars['ID']['output'];
   List: List;
   Mutation: {};
@@ -186,10 +207,12 @@ export type MutationResolvers<ContextType = ApolloContext, ParentType extends Re
   createTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'title'>>;
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'clerkId'>>;
   deleteTask?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'id'>>;
+  editTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationEditTaskArgs, 'input'>>;
 };
 
 export type QueryResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getListsByUser?: Resolver<Array<ResolversTypes['List']>, ParentType, ContextType>;
+  getTaskById?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryGetTaskByIdArgs, 'id'>>;
   getTasksByUser?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>;
 };
 

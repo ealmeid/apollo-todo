@@ -14,7 +14,9 @@ const config: CodegenConfig = {
         "typescript-react-apollo",
       ],
       config: {
-        avoidOptionals: true,
+        avoidOptionals: {
+          inputValue: false,
+        },
       },
     },
   },
