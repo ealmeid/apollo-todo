@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Button, Text, Input, TodoCard, MotionTodoCard } from "@/components";
+import {
+  Button,
+  Text,
+  Input,
+  TaskCard,
+  TaskDialog,
+  MotionTaskCard,
+} from "@/components";
 import {
   GetTasksByUserDocument,
   GetTasksByUserQuery,
@@ -8,11 +15,18 @@ import {
 } from "@/graphql/types/client";
 import { AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { Task } from "@prisma/client";
 
 export const Home = () => {
   const [todoValue, setTodoValue] = useState("");
+  const [currentTodo, setCurrentTodo] = useState<Pick<Task, "id" | "title">>({
+    id: "",
+    title: "",
+  });
 
   const { data, loading, error } = useGetTasksByUserQuery();
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const [createTodo] = useCreateTaskMutation({
     onCompleted: ({ createTask: task }) => {
@@ -62,10 +76,17 @@ export const Home = () => {
       {loading && (
         <div className="flex flex-col gap-4 max-w-[300px] w-full">
           {Array.from({ length: 3 }, (_, i) => (
-            <TodoCard.Skeleton key={i} />
+            <TaskCard.Skeleton key={i} />
           ))}
         </div>
       )}
+
+      <TaskDialog
+        id={currentTodo.id}
+        name={currentTodo.title}
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+      />
 
       {!loading &&
         !error &&
@@ -76,7 +97,11 @@ export const Home = () => {
           <div className="flex flex-col gap-4 max-w-[300px] w-full">
             <AnimatePresence mode={"popLayout"}>
               {data?.getTasksByUser.map((todo) => (
-                <MotionTodoCard
+                <MotionTaskCard
+                  onClick={() => {
+                    setCurrentTodo({ id: todo.id, title: todo.title });
+                    setIsOpen(true);
+                  }}
                   key={todo.id}
                   id={todo.id}
                   name={todo.title}

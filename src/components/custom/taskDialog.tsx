@@ -7,14 +7,19 @@ import {
 } from "@/graphql/types/client";
 import { Dialog, DialogContent, Button, Text } from "..";
 
-interface TodoDialogProps {
+interface TaskDialogProps {
   id: string;
   name: string;
   open?: boolean;
   onClose?: () => void;
 }
 
-export const TodoDialog = ({ id, name, open = false, onClose }: any) => {
+export const TaskDialog: React.FC<TaskDialogProps> = ({
+  id,
+  name,
+  open = false,
+  onClose = () => {},
+}) => {
   const [isOpen, setIsOpen] = useState(open);
 
   useEffect(() => {

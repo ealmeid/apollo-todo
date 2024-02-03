@@ -1,3 +1,3 @@
 export * from "./navbar";
-export * from "./todoCard";
-export * from "./todoDialog";
+export * from "./taskCard";
+export * from "./taskDialog";

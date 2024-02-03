@@ -2,14 +2,14 @@ import React from "react";
 import { Checkbox, Skeleton } from "..";
 import { motion } from "framer-motion";
 
-export interface TodoCardProps {
+export interface TaskCardProps {
   id: string;
   name: string;
   onClick?: () => void;
 }
 
 // eslint-disable-next-line
-const TodoCardComponent = React.forwardRef<HTMLDivElement, TodoCardProps>(
+const TaskCardComponent = React.forwardRef<HTMLDivElement, TaskCardProps>(
   ({ id, name, onClick, ...props }, ref) => {
     return (
       <div
@@ -25,13 +25,13 @@ const TodoCardComponent = React.forwardRef<HTMLDivElement, TodoCardProps>(
   }
 );
 
-export const MotionTodoCard = motion(TodoCardComponent);
+export const MotionTaskCard = motion(TaskCardComponent);
 
-export const TodoCard = TodoCardComponent as React.ForwardRefExoticComponent<
-  TodoCardProps & React.RefAttributes<HTMLDivElement>
+export const TaskCard = TaskCardComponent as React.ForwardRefExoticComponent<
+  TaskCardProps & React.RefAttributes<HTMLDivElement>
 > & {
   Skeleton: React.FC;
 };
 
 // eslint-disable-next-line
-TodoCard.Skeleton = () => <Skeleton className="w-full px-6 py-4 min-h-16" />;
+TaskCard.Skeleton = () => <Skeleton className="w-full px-6 py-4 min-h-16" />;
