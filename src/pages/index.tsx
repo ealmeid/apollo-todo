@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { toast } from "sonner";
+import { AnimatePresence } from "framer-motion";
+import Image from "next/image";
+
 import {
   Button,
   Text,
@@ -13,8 +17,6 @@ import {
   useCreateTaskMutation,
   useGetTasksByUserQuery,
 } from "@/graphql/types/client";
-import { AnimatePresence } from "framer-motion";
-import { toast } from "sonner";
 import { Task } from "@prisma/client";
 
 export const Home = () => {
@@ -51,6 +53,13 @@ export const Home = () => {
 
   return (
     <div className="items-center flex flex-col gap-8 m-auto mt-24">
+      <Image
+        className="shadow-2xl"
+        src="/logo.png"
+        width={50}
+        height={50}
+        alt="logo"
+      />
       <Text as="h1">apollo todo</Text>
       <Text as="lead">
         Lorem ipsum dolor sit amet consectetur adipisicing elit.
