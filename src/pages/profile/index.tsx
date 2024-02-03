@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useApolloClient } from "@apollo/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
 const Profile = () => {
@@ -35,9 +35,13 @@ const Profile = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: user?.username ?? "fdsfds",
+      username: user?.username ?? "",
     },
   });
+
+  useEffect(() => {
+    form.setValue("username", user?.username ?? "");
+  }, [user, form]);
 
   const onSignOut = async (e: any) => {
     e.preventDefault();
