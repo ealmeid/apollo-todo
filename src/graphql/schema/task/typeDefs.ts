@@ -8,6 +8,13 @@ export const typeDefs = gql`
     isCompleted: Boolean!
   }
 
+  input EditTaskInput {
+    id: ID!
+    title: String
+    description: String
+    isCompleted: Boolean
+  }
+
   type Query {
     getTaskById(id: ID!): Task
     getTasksByUser: [Task!]!
@@ -17,5 +24,6 @@ export const typeDefs = gql`
     createTask(title: String!): Task!
     deleteTask(id: ID!): ID!
     addTasksToLists(taskIds: [ID!]!, listIds: [ID!]!): [Task!]!
+    editTask(input: EditTaskInput!): Task!
   }
 `;

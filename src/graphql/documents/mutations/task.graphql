@@ -17,3 +17,12 @@ mutation AddTasksToLists($taskIds: [ID!]!, $listIds: [ID!]!) {
     isCompleted
   }
 }
+
+mutation EditTask($input: EditTaskInput!) {
+  editTask(input: $input) {
+    id
+    title
+    isCompleted
+    description
+  }
+}

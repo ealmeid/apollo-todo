@@ -3,6 +3,7 @@ import { getTasksByUser } from "./getTasksByUser";
 import { addTasksToLists } from "./addTasksToLists";
 import { deleteTask } from "./deleteTask";
 import { getTaskById } from "./getTaskById";
+import { editTask } from "./editTask";
 
 export const resolvers = {
   Query: {
@@ -13,5 +14,6 @@ export const resolvers = {
     createTask,
     addTasksToLists,
     deleteTask,
+    editTask,
   },
 };
