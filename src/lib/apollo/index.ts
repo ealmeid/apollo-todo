@@ -30,3 +30,5 @@ export const createApolloClient = (
 
   return apolloClient;
 };
+
+export * from "./hooks";

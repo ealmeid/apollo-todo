@@ -6,6 +6,9 @@ import {
   useGetListsByUserQuery,
 } from "@/graphql/types/client";
 import { Dialog, DialogContent, Button, Text } from "..";
+import { toast } from "sonner";
+import { useDeleteTask } from "@/lib/apollo";
+import { useApolloClient } from "@apollo/client";
 
 interface TaskDialogProps {
   id: string;
@@ -20,7 +23,9 @@ export const TaskDialog: React.FC<TaskDialogProps> = ({
   open = false,
   onClose = () => {},
 }) => {
+  const apolloClient = useApolloClient();
   const [isOpen, setIsOpen] = useState(open);
+  const { execute, undo } = useDeleteTask(id, apolloClient.cache);
 
   useEffect(() => {
     setIsOpen(open);
@@ -41,8 +46,9 @@ export const TaskDialog: React.FC<TaskDialogProps> = ({
     variables: {
       id,
     },
-    update(cache) {
-      cache.evict({ id: cache.identify({ __typename: "Task", id }) });
+    onCompleted: () => {},
+    optimisticResponse: {
+      deleteTask: id,
     },
   });
 
@@ -91,7 +97,30 @@ export const TaskDialog: React.FC<TaskDialogProps> = ({
           <Button
             className="min-w-1/2 w-full flex gap-2"
             variant="destructive"
-            onClick={() => deleteTask()}
+            onClick={() => {
+              setIsOpen(false);
+
+              execute();
+
+              const deleteTaskTimeout = setTimeout(() => {
+                deleteTask();
+              }, 4000);
+
+              toast.info(
+                <div>
+                  Task {name} has been deleted!{" "}
+                  <a
+                    className="underline cursor-pointer"
+                    onClick={() => {
+                      clearTimeout(deleteTaskTimeout);
+                      undo();
+                    }}
+                  >
+                    Undo
+                  </a>
+                </div>
+              );
+            }}
           >
             <Trash2 className="w-4 h-4">Delete Task</Trash2>
             Delete Task
