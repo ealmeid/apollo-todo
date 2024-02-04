@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="./logo.png" width="100" style="margin-bottom: 15px" />
+    <img src="./public/logo.png" width="100" style="margin-bottom: 15px" />
     <h1 style="text-align: center; ">
     apollo-todo
 </h1>
