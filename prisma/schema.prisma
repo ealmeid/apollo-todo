@@ -21,20 +21,24 @@ model User {
 }
 
 model Task {
-  id          String  @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   description String
-  isCompleted Boolean @default(false)
+  isCompleted Boolean  @default(false)
   userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
 
   lists TaskToList[]
   user  User         @relation(fields: [userId], references: [id])
 }
 
 model List {
-  id     String @id @default(uuid())
-  title  String
-  userId String
+  id        String   @id @default(uuid())
+  title     String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 
   tasks TaskToList[]
   user  User         @relation(fields: [userId], references: [id])
