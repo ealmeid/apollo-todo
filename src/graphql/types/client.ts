@@ -86,6 +86,7 @@ export type QueryGetTaskByIdArgs = {
 
 export type Task = {
   __typename?: 'Task';
+  createdAt: Scalars['String']['output'];
   description: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   isCompleted: Scalars['Boolean']['output'];
@@ -150,7 +151,7 @@ export type GetListsByUserQuery = { __typename?: 'Query', getListsByUser: Array<
 export type GetTasksByUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTasksByUserQuery = { __typename?: 'Query', getTasksByUser: Array<{ __typename?: 'Task', id: string, title: string, isCompleted: boolean }> };
+export type GetTasksByUserQuery = { __typename?: 'Query', getTasksByUser: Array<{ __typename?: 'Task', id: string, title: string, isCompleted: boolean, createdAt: string }> };
 
 
 export const CreateListDocument = gql`
@@ -405,6 +406,7 @@ export const GetTasksByUserDocument = gql`
     id
     title
     isCompleted
+    createdAt
   }
 }
     `;

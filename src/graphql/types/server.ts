@@ -86,6 +86,7 @@ export type QueryGetTaskByIdArgs = {
 
 export type Task = {
   __typename?: 'Task';
+  createdAt: Scalars['String']['output'];
   description: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   isCompleted: Scalars['Boolean']['output'];
@@ -217,6 +218,7 @@ export type QueryResolvers<ContextType = ApolloContext, ParentType extends Resol
 };
 
 export type TaskResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['Task'] = ResolversParentTypes['Task']> = {
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   isCompleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;

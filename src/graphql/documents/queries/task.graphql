@@ -3,5 +3,14 @@ query GetTasksByUser {
     id
     title
     isCompleted
+    createdAt
   }
 }
+
+# query GetTaskById(){
+#   getTasksByUser {
+#     id
+#     title
+#     isCompleted
+#   }
+# }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -18,21 +18,30 @@ import {
   useGetTasksByUserQuery,
 } from "@/graphql/types/client";
 import { Task } from "@prisma/client";
+import { useAuth } from "@clerk/nextjs";
 
 export const Home = () => {
+  const { isLoaded } = useAuth();
   const [todoValue, setTodoValue] = useState("");
-  const [currentTodo, setCurrentTodo] = useState<Pick<Task, "id" | "title">>({
+  const [currentTask, setCurrentTask] = useState<
+    Pick<Task, "id" | "title" | "createdAt">
+  >({
     id: "",
     title: "",
+    createdAt: new Date(),
   });
 
-  const { data, loading, error } = useGetTasksByUserQuery();
+  const { data, loading, refetch, error } = useGetTasksByUserQuery();
 
   const [isOpen, setIsOpen] = useState(false);
 
+  useEffect(() => {
+    refetch();
+  }, [refetch, isLoaded]);
+
   const [createTodo] = useCreateTaskMutation({
     onCompleted: ({ createTask: task }) => {
-      toast(`Task \"${task.title}\" has been created!`);
+      toast.success(`Task \"${task.title}\" has been created!`);
     },
     update(cache, { data }) {
       const newTodo = data?.createTask;
@@ -61,7 +70,7 @@ export const Home = () => {
         alt="logo"
       />
       <Text as="h1">apollo todo</Text>
-      <Text as="lead">
+      <Text as="lead" className="text-center">
         Lorem ipsum dolor sit amet consectetur adipisicing elit.
       </Text>
       <div className="flex gap-2">
@@ -91,8 +100,9 @@ export const Home = () => {
       )}
 
       <TaskDialog
-        id={currentTodo.id}
-        name={currentTodo.title}
+        id={currentTask.id}
+        name={currentTask.title}
+        createdAt={currentTask.createdAt}
         open={isOpen}
         onClose={() => setIsOpen(false)}
       />
@@ -105,22 +115,28 @@ export const Home = () => {
         ) : (
           <div className="flex flex-col gap-4 max-w-[300px] w-full">
             <AnimatePresence mode={"popLayout"}>
-              {data?.getTasksByUser.map((todo) => (
-                <MotionTaskCard
-                  onClick={() => {
-                    setCurrentTodo({ id: todo.id, title: todo.title });
-                    setIsOpen(true);
-                  }}
-                  key={todo.id}
-                  id={todo.id}
-                  name={todo.title}
-                  isCompleted={todo.isCompleted}
-                  layout
-                  // initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.8, opacity: 0 }}
-                  transition={{ type: "spring" }}
-                />
+              {data?.getTasksByUser.map((task) => (
+                <>
+                  <MotionTaskCard
+                    onClick={() => {
+                      setCurrentTask({
+                        id: task.id,
+                        title: task.title,
+                        createdAt: new Date(task.createdAt),
+                      });
+                      setIsOpen(true);
+                    }}
+                    key={task.id}
+                    id={task.id}
+                    name={task.title}
+                    isCompleted={task.isCompleted}
+                    layout
+                    // initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    transition={{ type: "spring" }}
+                  />
+                </>
               ))}
             </AnimatePresence>
           </div>
