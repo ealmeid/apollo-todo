@@ -10,9 +10,13 @@ import { toast } from "sonner";
 import { useDeleteTask } from "@/lib/apollo";
 import { useApolloClient } from "@apollo/client";
 
-interface TaskDialogProps {
+interface TaskDetails {
   id: string;
   name: string;
+  createdAt: Date;
+}
+
+interface TaskDialogProps extends TaskDetails {
   open?: boolean;
   onClose?: () => void;
 }
@@ -42,21 +46,17 @@ export const TaskDialog: React.FC<TaskDialogProps> = ({
 
   const [selectedLists, setSelectedLists] = useState<string[]>([]);
 
-  const [deleteTask] = useDeleteTaskMutation({
-    variables: {
-      id,
-    },
-    onCompleted: () => {},
-    optimisticResponse: {
-      deleteTask: id,
-    },
-  });
+  const [deleteTask] = useDeleteTaskMutation();
 
   const [addTaskToLists] = useAddTasksToListsMutation();
 
   return (
-    <Dialog open={isOpen}>
-      <DialogContent className="p-6" onBlur={() => onClose()}>
+    <Dialog open={isOpen} modal>
+      <DialogContent
+        className="p-6 rounded-md"
+        onEscapeKeyDown={onClose}
+        onInteractOutside={onClose}
+      >
         <div className="flex flex-col gap-6 max-h-[300px] p-4 overflow-y-auto">
           <Text as="h3">{name}</Text>
           {/* Use the description provided by the task later */}
@@ -103,7 +103,14 @@ export const TaskDialog: React.FC<TaskDialogProps> = ({
               execute();
 
               const deleteTaskTimeout = setTimeout(() => {
-                deleteTask();
+                deleteTask({
+                  variables: {
+                    id,
+                  },
+                  optimisticResponse: {
+                    deleteTask: id,
+                  },
+                });
               }, 4000);
 
               toast.info(
