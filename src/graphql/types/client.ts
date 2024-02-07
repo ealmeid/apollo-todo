@@ -72,16 +72,29 @@ export type MutationEditTaskArgs = {
   input: EditTaskInput;
 };
 
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['String']['output']>;
+  hasNextPage?: Maybe<Scalars['Boolean']['output']>;
+  startCursor?: Maybe<Scalars['String']['output']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   getListsByUser: Array<List>;
   getTaskById?: Maybe<Task>;
-  getTasksByUser: Array<Task>;
+  getTasksByUser?: Maybe<TaskConnection>;
 };
 
 
 export type QueryGetTaskByIdArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryGetTasksByUserArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first: Scalars['Int']['input'];
 };
 
 export type Task = {
@@ -91,6 +104,18 @@ export type Task = {
   id: Scalars['ID']['output'];
   isCompleted: Scalars['Boolean']['output'];
   title: Scalars['String']['output'];
+};
+
+export type TaskConnection = {
+  __typename?: 'TaskConnection';
+  edges: Array<TaskEdge>;
+  pageInfo?: Maybe<PageInfo>;
+};
+
+export type TaskEdge = {
+  __typename?: 'TaskEdge';
+  cursor: Scalars['String']['output'];
+  node: Task;
 };
 
 export type User = {
@@ -112,7 +137,7 @@ export type CreateTaskMutationVariables = Exact<{
 }>;
 
 
-export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, title: string, isCompleted: boolean } };
+export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, title: string, isCompleted: boolean, createdAt: string } };
 
 export type DeleteTaskMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -148,10 +173,13 @@ export type GetListsByUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetListsByUserQuery = { __typename?: 'Query', getListsByUser: Array<{ __typename?: 'List', id: string, title: string, taskIds: Array<string> }> };
 
-export type GetTasksByUserQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetTasksByUserQueryVariables = Exact<{
+  first: Scalars['Int']['input'];
+  after?: InputMaybe<Scalars['String']['input']>;
+}>;
 
 
-export type GetTasksByUserQuery = { __typename?: 'Query', getTasksByUser: Array<{ __typename?: 'Task', id: string, title: string, isCompleted: boolean, createdAt: string }> };
+export type GetTasksByUserQuery = { __typename?: 'Query', getTasksByUser?: { __typename?: 'TaskConnection', edges: Array<{ __typename?: 'TaskEdge', node: { __typename?: 'Task', id: string, title: string, isCompleted: boolean, createdAt: string } }>, pageInfo?: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null } | null } | null };
 
 
 export const CreateListDocument = gql`
@@ -194,6 +222,7 @@ export const CreateTaskDocument = gql`
     id
     title
     isCompleted
+    createdAt
   }
 }
     `;
@@ -401,12 +430,20 @@ export type GetListsByUserLazyQueryHookResult = ReturnType<typeof useGetListsByU
 export type GetListsByUserSuspenseQueryHookResult = ReturnType<typeof useGetListsByUserSuspenseQuery>;
 export type GetListsByUserQueryResult = Apollo.QueryResult<GetListsByUserQuery, GetListsByUserQueryVariables>;
 export const GetTasksByUserDocument = gql`
-    query GetTasksByUser {
-  getTasksByUser {
-    id
-    title
-    isCompleted
-    createdAt
+    query GetTasksByUser($first: Int!, $after: String) {
+  getTasksByUser(first: $first, after: $after) {
+    edges {
+      node {
+        id
+        title
+        isCompleted
+        createdAt
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
   }
 }
     `;
@@ -423,10 +460,12 @@ export const GetTasksByUserDocument = gql`
  * @example
  * const { data, loading, error } = useGetTasksByUserQuery({
  *   variables: {
+ *      first: // value for 'first'
+ *      after: // value for 'after'
  *   },
  * });
  */
-export function useGetTasksByUserQuery(baseOptions?: Apollo.QueryHookOptions<GetTasksByUserQuery, GetTasksByUserQueryVariables>) {
+export function useGetTasksByUserQuery(baseOptions: Apollo.QueryHookOptions<GetTasksByUserQuery, GetTasksByUserQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetTasksByUserQuery, GetTasksByUserQueryVariables>(GetTasksByUserDocument, options);
       }

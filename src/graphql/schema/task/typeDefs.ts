@@ -18,7 +18,7 @@ export const typeDefs = gql`
 
   type Query {
     getTaskById(id: ID!): Task
-    getTasksByUser: [Task!]!
+    getTasksByUser(first: Int!, after: String): TaskConnection
   }
 
   type Mutation {
@@ -26,5 +26,21 @@ export const typeDefs = gql`
     deleteTask(id: ID!): ID!
     addTasksToLists(taskIds: [ID!]!, listIds: [ID!]!): [Task!]!
     editTask(input: EditTaskInput!): Task!
+  }
+
+  type TaskConnection {
+    edges: [TaskEdge!]!
+    pageInfo: PageInfo
+  }
+
+  type TaskEdge {
+    node: Task!
+    cursor: String!
+  }
+
+  type PageInfo {
+    startCursor: String
+    endCursor: String
+    hasNextPage: Boolean
   }
 `;

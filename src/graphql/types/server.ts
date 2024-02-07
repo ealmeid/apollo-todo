@@ -72,16 +72,29 @@ export type MutationEditTaskArgs = {
   input: EditTaskInput;
 };
 
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['String']['output']>;
+  hasNextPage?: Maybe<Scalars['Boolean']['output']>;
+  startCursor?: Maybe<Scalars['String']['output']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   getListsByUser: Array<List>;
   getTaskById?: Maybe<Task>;
-  getTasksByUser: Array<Task>;
+  getTasksByUser?: Maybe<TaskConnection>;
 };
 
 
 export type QueryGetTaskByIdArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryGetTasksByUserArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first: Scalars['Int']['input'];
 };
 
 export type Task = {
@@ -91,6 +104,18 @@ export type Task = {
   id: Scalars['ID']['output'];
   isCompleted: Scalars['Boolean']['output'];
   title: Scalars['String']['output'];
+};
+
+export type TaskConnection = {
+  __typename?: 'TaskConnection';
+  edges: Array<TaskEdge>;
+  pageInfo?: Maybe<PageInfo>;
+};
+
+export type TaskEdge = {
+  __typename?: 'TaskEdge';
+  cursor: Scalars['String']['output'];
+  node: Task;
 };
 
 export type User = {
@@ -174,11 +199,15 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   EditTaskInput: EditTaskInput;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   List: ResolverTypeWrapper<List>;
   Mutation: ResolverTypeWrapper<{}>;
+  PageInfo: ResolverTypeWrapper<PageInfo>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Task: ResolverTypeWrapper<Task>;
+  TaskConnection: ResolverTypeWrapper<TaskConnection>;
+  TaskEdge: ResolverTypeWrapper<TaskEdge>;
   User: ResolverTypeWrapper<User>;
 };
 
@@ -187,11 +216,15 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
   EditTaskInput: EditTaskInput;
   ID: Scalars['ID']['output'];
+  Int: Scalars['Int']['output'];
   List: List;
   Mutation: {};
+  PageInfo: PageInfo;
   Query: {};
   String: Scalars['String']['output'];
   Task: Task;
+  TaskConnection: TaskConnection;
+  TaskEdge: TaskEdge;
   User: User;
 };
 
@@ -211,10 +244,17 @@ export type MutationResolvers<ContextType = ApolloContext, ParentType extends Re
   editTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationEditTaskArgs, 'input'>>;
 };
 
+export type PageInfoResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
+  endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  hasNextPage?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  startCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getListsByUser?: Resolver<Array<ResolversTypes['List']>, ParentType, ContextType>;
   getTaskById?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryGetTaskByIdArgs, 'id'>>;
-  getTasksByUser?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>;
+  getTasksByUser?: Resolver<Maybe<ResolversTypes['TaskConnection']>, ParentType, ContextType, RequireFields<QueryGetTasksByUserArgs, 'first'>>;
 };
 
 export type TaskResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['Task'] = ResolversParentTypes['Task']> = {
@@ -223,6 +263,18 @@ export type TaskResolvers<ContextType = ApolloContext, ParentType extends Resolv
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   isCompleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type TaskConnectionResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['TaskConnection'] = ResolversParentTypes['TaskConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['TaskEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<Maybe<ResolversTypes['PageInfo']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type TaskEdgeResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['TaskEdge'] = ResolversParentTypes['TaskEdge']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['Task'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -236,8 +288,11 @@ export type UserResolvers<ContextType = ApolloContext, ParentType extends Resolv
 export type Resolvers<ContextType = ApolloContext> = {
   List?: ListResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  PageInfo?: PageInfoResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Task?: TaskResolvers<ContextType>;
+  TaskConnection?: TaskConnectionResolvers<ContextType>;
+  TaskEdge?: TaskEdgeResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
 

@@ -1,9 +1,17 @@
-query GetTasksByUser {
-  getTasksByUser {
-    id
-    title
-    isCompleted
-    createdAt
+query GetTasksByUser($first: Int!, $after: String) {
+  getTasksByUser(first: $first, after: $after) {
+    edges {
+      node {
+        id
+        title
+        isCompleted
+        createdAt
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
   }
 }
 

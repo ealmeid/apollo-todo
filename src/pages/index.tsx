@@ -12,13 +12,16 @@ import {
   MotionTaskCard,
 } from "@/components";
 import {
-  GetTasksByUserDocument,
-  GetTasksByUserQuery,
+  GetTasksByUserQueryResult,
   useCreateTaskMutation,
   useGetTasksByUserQuery,
 } from "@/graphql/types/client";
 import { Task } from "@prisma/client";
 import { useAuth } from "@clerk/nextjs";
+
+type GetTasksByUserData = NonNullable<
+  GetTasksByUserQueryResult["data"]
+>["getTasksByUser"];
 
 export const Home = () => {
   const { isLoaded } = useAuth();
@@ -31,7 +34,11 @@ export const Home = () => {
     createdAt: new Date(),
   });
 
-  const { data, loading, refetch, error } = useGetTasksByUserQuery();
+  const { data, loading, refetch, fetchMore, error } = useGetTasksByUserQuery({
+    variables: {
+      first: 3,
+    },
+  });
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -44,24 +51,28 @@ export const Home = () => {
       toast.success(`Task \"${task.title}\" has been created!`);
     },
     update(cache, { data }) {
-      const newTodo = data?.createTask;
-      const existingTasks = cache.readQuery<GetTasksByUserQuery>({
-        query: GetTasksByUserDocument,
-      });
+      const newTask = data?.createTask;
 
-      const newArr = [newTodo, ...(existingTasks?.getTasksByUser ?? [])];
+      if (!newTask) return;
 
-      cache.writeQuery({
-        query: GetTasksByUserDocument,
-        data: {
-          getTasksByUser: newArr,
+      cache.modify({
+        fields: {
+          getTasksByUser(existing) {
+            return {
+              ...(existing as GetTasksByUserData),
+              edges: [
+                { node: { ...newTask } },
+                ...((existing as GetTasksByUserData)?.edges ?? []),
+              ],
+            };
+          },
         },
       });
     },
   });
 
   return (
-    <div className="items-center flex flex-col gap-8 m-auto mt-24">
+    <div className="items-center flex flex-col gap-8 m-auto mt-24 pb-12">
       <Image
         className="shadow-2xl"
         src="/logo.png"
@@ -110,37 +121,50 @@ export const Home = () => {
       {!loading &&
         !error &&
         data &&
-        (data?.getTasksByUser.length === 0 ? (
+        (data?.getTasksByUser?.edges.length === 0 ? (
           <Text as="p">No todos yet!</Text>
         ) : (
           <div className="flex flex-col gap-4 max-w-[300px] w-full">
             <AnimatePresence mode={"popLayout"}>
-              {data?.getTasksByUser.map((task) => (
-                <>
-                  <MotionTaskCard
-                    onClick={() => {
-                      setCurrentTask({
-                        id: task.id,
-                        title: task.title,
-                        createdAt: new Date(task.createdAt),
-                      });
-                      setIsOpen(true);
-                    }}
-                    key={task.id}
-                    id={task.id}
-                    name={task.title}
-                    isCompleted={task.isCompleted}
-                    layout
-                    // initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    transition={{ type: "spring" }}
-                  />
-                </>
+              {data?.getTasksByUser?.edges.map(({ node: task }) => (
+                <MotionTaskCard
+                  layout
+                  key={task.id}
+                  id={task.id}
+                  name={task.title}
+                  isCompleted={task.isCompleted}
+                  onClick={() => {
+                    setCurrentTask({
+                      id: task.id,
+                      title: task.title,
+                      createdAt: new Date(task?.createdAt),
+                    });
+                    setIsOpen(true);
+                  }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  transition={{ type: "spring" }}
+                />
               ))}
             </AnimatePresence>
           </div>
         ))}
+
+      {data?.getTasksByUser?.pageInfo?.hasNextPage && (
+        <Button
+          variant="outline"
+          onClick={() => {
+            fetchMore({
+              variables: {
+                after: data?.getTasksByUser?.pageInfo?.endCursor,
+                first: 3,
+              },
+            });
+          }}
+        >
+          Load More
+        </Button>
+      )}
     </div>
   );
 };

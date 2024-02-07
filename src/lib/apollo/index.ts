@@ -24,7 +24,28 @@ export const createApolloClient = (
 
   apolloClient = new ApolloClient({
     link: httpLink,
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      typePolicies: {
+        Query: {
+          fields: {
+            getTasksByUser: {
+              keyArgs: false,
+              merge(existing = {}, incoming = {}) {
+                const existingEdges = existing.edges ?? [];
+                const incomingEdges = incoming.edges ?? [];
+
+                const edges = [...existingEdges, ...incomingEdges];
+
+                return {
+                  ...incoming,
+                  edges,
+                };
+              },
+            },
+          },
+        },
+      },
+    }),
     ...opts,
   });
 

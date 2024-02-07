@@ -3,6 +3,7 @@ mutation CreateTask($title: String!) {
     id
     title
     isCompleted
+    createdAt
   }
 }
 
