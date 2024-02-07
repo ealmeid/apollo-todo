@@ -21,7 +21,7 @@ interface TaskDialogProps extends TaskDetails {
   onClose?: () => void;
 }
 
-export const TaskDialog: React.FC<TaskDialogProps> = ({
+export const TaskModal: React.FC<TaskDialogProps> = ({
   id,
   name,
   open = false,
@@ -98,7 +98,7 @@ export const TaskDialog: React.FC<TaskDialogProps> = ({
             className="min-w-1/2 w-full flex gap-2"
             variant="destructive"
             onClick={() => {
-              setIsOpen(false);
+              onClose();
 
               execute();
 
@@ -113,13 +113,14 @@ export const TaskDialog: React.FC<TaskDialogProps> = ({
                 });
               }, 4000);
 
-              toast.info(
+              const deletedTaskToastId = toast.info(
                 <div>
                   Task {name} has been deleted!{" "}
                   <a
                     className="underline cursor-pointer"
                     onClick={() => {
                       clearTimeout(deleteTaskTimeout);
+                      toast.dismiss(deletedTaskToastId);
                       undo();
                     }}
                   >

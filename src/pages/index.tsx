@@ -8,7 +8,7 @@ import {
   Text,
   Input,
   TaskCard,
-  TaskDialog,
+  TaskModal,
   MotionTaskCard,
 } from "@/components";
 import {
@@ -34,9 +34,11 @@ export const Home = () => {
     createdAt: new Date(),
   });
 
+  const LIMIT = 5;
+
   const { data, loading, refetch, fetchMore, error } = useGetTasksByUserQuery({
     variables: {
-      first: 3,
+      first: LIMIT,
     },
   });
 
@@ -110,7 +112,7 @@ export const Home = () => {
         </div>
       )}
 
-      <TaskDialog
+      <TaskModal
         id={currentTask.id}
         name={currentTask.title}
         createdAt={currentTask.createdAt}
@@ -157,7 +159,7 @@ export const Home = () => {
             fetchMore({
               variables: {
                 after: data?.getTasksByUser?.pageInfo?.endCursor,
-                first: 3,
+                first: LIMIT,
               },
             });
           }}

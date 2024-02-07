@@ -6,23 +6,43 @@ export const useDeleteTask = (id: string, cache: ApolloCache<any>) => {
     id,
   });
 
+  let indexOfTask = -1;
+
   const execute = () =>
     cache.modify({
       fields: {
-        getTasksByUser(existingTasks = [], { readField }) {
-          return existingTasks.filter(
-            (taskRef: any) => id !== readField("id", taskRef)
+        getTasksByUser(existing = {}, { readField }) {
+          const existingEdges = existing.edges ?? [];
+
+          indexOfTask = existingEdges.findIndex(
+            ({ node: taskRef }: any) => id === readField("id", taskRef)
           );
+
+          const filteredEdges = existingEdges.filter(
+            ({ node: taskRef }: any) => id !== readField("id", taskRef)
+          );
+
+          return {
+            ...existing,
+            edges: filteredEdges,
+          };
         },
       },
     });
 
   const undo = () => {
-    console.log("UNDO HERE====", cachedTask);
     cache.modify({
       fields: {
-        getTasksByUser(existingTasks = []) {
-          return [{ id: cachedTask }, ...existingTasks];
+        getTasksByUser(existing = {}) {
+          const existingEdges = existing.edges ?? [];
+
+          const start = existingEdges.slice(0, indexOfTask);
+          const end = existingEdges.slice(indexOfTask);
+
+          return {
+            ...existing,
+            edges: [...start, { node: cachedTask }, ...end],
+          };
         },
       },
     });
