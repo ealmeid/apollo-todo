@@ -18,6 +18,7 @@ import {
 } from "@/graphql/types/client";
 import { Task } from "@prisma/client";
 import { useAuth } from "@clerk/nextjs";
+import { Loader2 } from "lucide-react";
 
 type GetTasksByUserData = NonNullable<
   GetTasksByUserQueryResult["data"]
@@ -25,6 +26,7 @@ type GetTasksByUserData = NonNullable<
 
 export const Home = () => {
   const { isLoaded } = useAuth();
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [todoValue, setTodoValue] = useState("");
   const [currentTask, setCurrentTask] = useState<
     Pick<Task, "id" | "title" | "createdAt">
@@ -45,8 +47,10 @@ export const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    refetch();
-  }, [refetch, isLoaded]);
+    if (data?.getTasksByUser?.edges.length === 0) {
+      refetch();
+    }
+  }, [data, refetch, isLoaded]);
 
   const [createTodo] = useCreateTaskMutation({
     onCompleted: ({ createTask: task }) => {
@@ -84,7 +88,7 @@ export const Home = () => {
       />
       <Text as="h1">apollo todo</Text>
       <Text as="lead" className="text-center">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        Add, Edit, Manage, and Complete.
       </Text>
       <div className="flex gap-2">
         <Input
@@ -93,6 +97,7 @@ export const Home = () => {
           placeholder="Pick up pasta..."
         />
         <Button
+          className="inline-flex animate-shimmer items-center justify-center rounded-md border bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
           onClick={() => {
             createTodo({
               variables: {
@@ -152,15 +157,22 @@ export const Home = () => {
           </div>
         ))}
 
-      {data?.getTasksByUser?.pageInfo?.hasNextPage && (
+      {isLoadingMore && (
+        <Loader2 className="animate-spin" size={32} color="currentColor" />
+      )}
+
+      {data?.getTasksByUser?.pageInfo?.hasNextPage && !isLoadingMore && (
         <Button
           variant="outline"
           onClick={() => {
+            setIsLoadingMore(true);
             fetchMore({
               variables: {
                 after: data?.getTasksByUser?.pageInfo?.endCursor,
                 first: LIMIT,
               },
+            }).finally(() => {
+              setIsLoadingMore(false);
             });
           }}
         >
