@@ -18,7 +18,7 @@ import {
 } from "@/graphql/types/client";
 import { Task } from "@prisma/client";
 import { useAuth } from "@clerk/nextjs";
-import { Loader2 } from "lucide-react";
+import { ArrowDown, Loader2 } from "lucide-react";
 
 type GetTasksByUserData = NonNullable<
   GetTasksByUserQueryResult["data"]
@@ -36,7 +36,7 @@ export const Home = () => {
     createdAt: new Date(),
   });
 
-  const LIMIT = 5;
+  const LIMIT = 3;
 
   const { data, loading, refetch, fetchMore, error } = useGetTasksByUserQuery({
     variables: {
@@ -86,7 +86,7 @@ export const Home = () => {
         height={50}
         alt="logo"
       />
-      <Text as="h1">apollo todo</Text>
+      <Text as="h1">apollo-todo</Text>
       <Text as="lead" className="text-center">
         Add, Edit, Manage, and Complete.
       </Text>
@@ -164,6 +164,7 @@ export const Home = () => {
       {data?.getTasksByUser?.pageInfo?.hasNextPage && !isLoadingMore && (
         <Button
           variant="outline"
+          className="flex gap-2"
           onClick={() => {
             setIsLoadingMore(true);
             fetchMore({
@@ -176,6 +177,7 @@ export const Home = () => {
             });
           }}
         >
+          <ArrowDown className="w-5" />
           Load More
         </Button>
       )}

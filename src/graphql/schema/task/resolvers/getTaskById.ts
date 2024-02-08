@@ -6,16 +6,16 @@ export const getTaskById: QueryResolvers["getTaskById"] = async (
   { prisma, user },
   _info
 ) => {
-  const task = await prisma.task
-    .findFirst({
-      where: {
-        id: id,
-        userId: user.id,
-      },
-    })
-    .catch(() => {
-      throw new Error(`Unable to find task with id: ${id}`);
-    });
+  const task = await prisma.task.findFirst({
+    where: {
+      id: id,
+      userId: user.id,
+    },
+  });
+
+  if (!task) {
+    throw new Error(`Unable to find task with id: ${id}`);
+  }
 
   return task;
 };

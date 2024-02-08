@@ -18,7 +18,7 @@ export const editTask: MutationResolvers["editTask"] = async (
 
   const validatedInput = inputSchema.parse(dataToUpdate);
 
-  const todo = await prisma.task.update({
+  const task = await prisma.task.update({
     where: {
       id: input.id,
       userId,
@@ -28,5 +28,5 @@ export const editTask: MutationResolvers["editTask"] = async (
     },
   });
 
-  return todo;
+  return task;
 };
