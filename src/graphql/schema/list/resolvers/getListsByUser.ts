@@ -11,6 +11,9 @@ export const getListsByUser: QueryResolvers["getListsByUser"] = async (
     where: {
       userId: user.id,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
     include: {
       tasks: {
         select: {
