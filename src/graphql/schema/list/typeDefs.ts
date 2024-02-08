@@ -7,6 +7,11 @@ export const typeDefs = gql`
     taskIds: [ID!]!
   }
 
+  input EditListInput {
+    id: ID!
+    title: String
+  }
+
   type Query {
     getListsByUser: [List!]!
   }
@@ -14,5 +19,6 @@ export const typeDefs = gql`
   type Mutation {
     createList(title: String!): List!
     deleteList(id: ID!): ID!
+    editList(input: EditListInput!): List!
   }
 `;

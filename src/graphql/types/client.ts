@@ -17,6 +17,11 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type EditListInput = {
+  id: Scalars['ID']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type EditTaskInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
@@ -39,6 +44,7 @@ export type Mutation = {
   createUser?: Maybe<User>;
   deleteList: Scalars['ID']['output'];
   deleteTask: Scalars['ID']['output'];
+  editList: Task;
   editTask: Task;
 };
 
@@ -71,6 +77,11 @@ export type MutationDeleteListArgs = {
 
 export type MutationDeleteTaskArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationEditListArgs = {
+  input: EditListInput;
 };
 
 
@@ -137,6 +148,13 @@ export type CreateListMutationVariables = Exact<{
 
 
 export type CreateListMutation = { __typename?: 'Mutation', createList: { __typename?: 'List', id: string, title: string } };
+
+export type EditListMutationVariables = Exact<{
+  input: EditListInput;
+}>;
+
+
+export type EditListMutation = { __typename?: 'Mutation', editList: { __typename?: 'Task', id: string, title: string } };
 
 export type DeleteListMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -229,6 +247,40 @@ export function useCreateListMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateListMutationHookResult = ReturnType<typeof useCreateListMutation>;
 export type CreateListMutationResult = Apollo.MutationResult<CreateListMutation>;
 export type CreateListMutationOptions = Apollo.BaseMutationOptions<CreateListMutation, CreateListMutationVariables>;
+export const EditListDocument = gql`
+    mutation EditList($input: EditListInput!) {
+  editList(input: $input) {
+    id
+    title
+  }
+}
+    `;
+export type EditListMutationFn = Apollo.MutationFunction<EditListMutation, EditListMutationVariables>;
+
+/**
+ * __useEditListMutation__
+ *
+ * To run a mutation, you first call `useEditListMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditListMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editListMutation, { data, loading, error }] = useEditListMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditListMutation(baseOptions?: Apollo.MutationHookOptions<EditListMutation, EditListMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditListMutation, EditListMutationVariables>(EditListDocument, options);
+      }
+export type EditListMutationHookResult = ReturnType<typeof useEditListMutation>;
+export type EditListMutationResult = Apollo.MutationResult<EditListMutation>;
+export type EditListMutationOptions = Apollo.BaseMutationOptions<EditListMutation, EditListMutationVariables>;
 export const DeleteListDocument = gql`
     mutation DeleteList($id: ID!) {
   deleteList(id: $id)

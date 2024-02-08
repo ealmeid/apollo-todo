@@ -17,6 +17,11 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type EditListInput = {
+  id: Scalars['ID']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type EditTaskInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
@@ -39,6 +44,7 @@ export type Mutation = {
   createUser?: Maybe<User>;
   deleteList: Scalars['ID']['output'];
   deleteTask: Scalars['ID']['output'];
+  editList: Task;
   editTask: Task;
 };
 
@@ -71,6 +77,11 @@ export type MutationDeleteListArgs = {
 
 export type MutationDeleteTaskArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationEditListArgs = {
+  input: EditListInput;
 };
 
 
@@ -203,6 +214,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  EditListInput: EditListInput;
   EditTaskInput: EditTaskInput;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
@@ -220,6 +232,7 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
+  EditListInput: EditListInput;
   EditTaskInput: EditTaskInput;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
@@ -248,6 +261,7 @@ export type MutationResolvers<ContextType = ApolloContext, ParentType extends Re
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'clerkId'>>;
   deleteList?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteListArgs, 'id'>>;
   deleteTask?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'id'>>;
+  editList?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationEditListArgs, 'input'>>;
   editTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationEditTaskArgs, 'input'>>;
 };
 

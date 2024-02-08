@@ -5,6 +5,13 @@ mutation CreateList($title: String!) {
   }
 }
 
+mutation EditList($input: EditListInput!) {
+  editList(input: $input) {
+    id
+    title
+  }
+}
+
 mutation DeleteList($id: ID!) {
   deleteList(id: $id)
 }

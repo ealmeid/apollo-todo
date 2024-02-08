@@ -15,3 +15,4 @@ export * from "./skeleton";
 export * from "./dialog";
 export * from "./sonner";
 export * from "./context-menu";
+export * from "./drawer";
