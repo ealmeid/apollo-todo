@@ -4,3 +4,7 @@ mutation CreateList($title: String!) {
     title
   }
 }
+
+mutation DeleteList($id: ID!) {
+  deleteList(id: $id)
+}

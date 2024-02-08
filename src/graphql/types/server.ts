@@ -37,6 +37,7 @@ export type Mutation = {
   createList: List;
   createTask: Task;
   createUser?: Maybe<User>;
+  deleteList: Scalars['ID']['output'];
   deleteTask: Scalars['ID']['output'];
   editTask: Task;
 };
@@ -60,6 +61,11 @@ export type MutationCreateTaskArgs = {
 
 export type MutationCreateUserArgs = {
   clerkId: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteListArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -240,6 +246,7 @@ export type MutationResolvers<ContextType = ApolloContext, ParentType extends Re
   createList?: Resolver<ResolversTypes['List'], ParentType, ContextType, RequireFields<MutationCreateListArgs, 'title'>>;
   createTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'title'>>;
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'clerkId'>>;
+  deleteList?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteListArgs, 'id'>>;
   deleteTask?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'id'>>;
   editTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationEditTaskArgs, 'input'>>;
 };

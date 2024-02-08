@@ -13,5 +13,6 @@ export const typeDefs = gql`
 
   type Mutation {
     createList(title: String!): List!
+    deleteList(id: ID!): ID!
   }
 `;

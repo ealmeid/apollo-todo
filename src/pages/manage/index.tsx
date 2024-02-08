@@ -1,8 +1,41 @@
-import { Text, Button, ListCard, CreateListDialog } from "@/components";
-import { useGetListsByUserQuery } from "@/graphql/types/client";
+import {
+  Text,
+  Button,
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+  ListCard,
+  CreateListDialog,
+} from "@/components";
+import {
+  useDeleteListMutation,
+  useGetListsByUserQuery,
+} from "@/graphql/types/client";
+import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 export const Manage = () => {
   const { data } = useGetListsByUserQuery();
+  const [deleteList] = useDeleteListMutation({
+    onCompleted: () => {
+      toast.success("List deleted successfully");
+    },
+    update(cache, { data }) {
+      const deletedListId = data?.deleteList;
+      if (deletedListId) {
+        cache.modify({
+          fields: {
+            getListsByUser(existingLists = [], { readField }) {
+              return existingLists.filter(
+                (listRef: any) => deletedListId !== readField("id", listRef)
+              );
+            },
+          },
+        });
+      }
+    },
+  });
 
   return (
     <div className="items-center flex flex-col gap-8 m-auto mt-24 max-w-[900px] pb-12">
@@ -22,7 +55,25 @@ export const Manage = () => {
           <div className="m-auto">No Lists yet!</div>
         )}
         {data?.getListsByUser.map((list) => (
-          <ListCard key={list.id} id={list.id} title={list.title} />
+          <ContextMenu key={list.id}>
+            <ContextMenuTrigger>
+              <ListCard key={list.id} id={list.id} title={list.title} />
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+              <ContextMenuItem
+                className="text-red-500 flex gap-2"
+                onClick={() =>
+                  deleteList({
+                    optimisticResponse: { deleteList: list.id },
+                    variables: { id: list.id },
+                  })
+                }
+              >
+                <Trash2 className="w-4" />
+                Delete
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
         ))}
       </div>
     </div>
