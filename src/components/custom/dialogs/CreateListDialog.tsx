@@ -28,6 +28,18 @@ export const CreateListDialog: React.FC<CreateListDialogProps> = ({
   const [isOpen, setIsOpen] = useState(open);
   const close = () => setIsOpen(false);
   const [createList, { loading }] = useCreateListMutation({
+    update: (cache, { data }) => {
+      const newList = data?.createList;
+      if (data?.createList) {
+        cache.modify({
+          fields: {
+            getListsByUser(existingLists = []) {
+              return [newList, ...existingLists];
+            },
+          },
+        });
+      }
+    },
     onCompleted: () => {
       close();
     },

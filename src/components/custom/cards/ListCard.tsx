@@ -9,7 +9,7 @@ interface ListCardProps {
 export const ListCard: React.FC<ListCardProps> = ({ key, id, title }) => {
   return (
     <div
-      className="cursor-pointer bg-slate-100 flex items-center gap-4 w-full px-6 py-4 border-slate-200 border rounded-lg min-h-16 hover:bg-slate-50"
+      className="cursor-pointer bg-slate-100 flex items-center gap-4 w-full px-6 py-4 border-slate-200 border rounded-lg min-h-16 hover:shadow-lg transition duration-200 "
       key={key}
     >
       <div className="flex items-start gap-4 w-full">
