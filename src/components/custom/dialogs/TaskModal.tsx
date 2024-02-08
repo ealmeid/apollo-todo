@@ -5,7 +5,7 @@ import {
   useDeleteTaskMutation,
   useGetListsByUserQuery,
 } from "@/graphql/types/client";
-import { Dialog, DialogContent, Button, Text } from "..";
+import { Dialog, DialogContent, Button, Text } from "../..";
 import { toast } from "sonner";
 import { useDeleteTask } from "@/lib/apollo";
 import { useApolloClient } from "@apollo/client";

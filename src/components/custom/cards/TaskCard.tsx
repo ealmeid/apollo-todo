@@ -1,5 +1,5 @@
 import React from "react";
-import { Checkbox, Skeleton } from "..";
+import { Checkbox, Skeleton } from "../..";
 import { motion } from "framer-motion";
 import { useEditTaskMutation } from "@/graphql/types/client";
 

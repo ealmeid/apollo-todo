@@ -1,4 +1,3 @@
 export * from "./navbar";
-export * from "./listCard";
-export * from "./taskCard";
-export * from "./taskModal";
+export * from "./cards";
+export * from "./dialogs";

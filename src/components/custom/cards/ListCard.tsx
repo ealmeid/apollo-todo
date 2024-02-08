@@ -1,4 +1,4 @@
-import { Text, Progress } from "..";
+import { Text, Progress } from "../..";
 
 interface ListCardProps {
   key: string;
