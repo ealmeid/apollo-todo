@@ -1,4 +1,4 @@
-import { Text, Button, Progress } from "@/components";
+import { Text, Button, ListCard } from "@/components";
 import {
   useCreateListMutation,
   useGetListsByUserQuery,
@@ -10,47 +10,34 @@ export const Manage = () => {
   const { data } = useGetListsByUserQuery();
 
   return (
-    <div className="items-center flex flex-col gap-8 m-auto mt-24">
-      <Text as="h1">Your Lists</Text>
-      <Button
-        onClick={() =>
-          createList({
-            variables: {
-              title: "test",
-            },
-          })
-        }
-      >
-        Create List
-      </Button>
-      <div className="flex flex-col gap-4 max-w-[300px] w-full">
+    <div className="items-center flex flex-col gap-8 m-auto mt-24 max-w-[900px]">
+      <div className="flex flex-col gap-6 mr-auto">
+        <Text as="h1" className="!text-4xl">
+          Your Lists
+        </Text>
+        <Text as="p" className="!m-0">
+          Manage your lists, add, edit, and delete tasks from your lists.
+        </Text>
+        <div>
+          <Button
+            onClick={() =>
+              createList({
+                variables: {
+                  title: "test",
+                },
+              })
+            }
+          >
+            Create List
+          </Button>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-[900px]">
         {data?.getListsByUser.length === 0 && (
           <div className="m-auto">No Lists yet!</div>
         )}
         {data?.getListsByUser.map((list) => (
-          <div
-            className="cursor-pointer bg-slate-100 flex items-center gap-4 w-full px-6 py-4 border-slate-200 border rounded-lg min-h-16 hover:bg-slate-50"
-            key={list.id}
-          >
-            <div className="flex items-start gap-4 w-full">
-              <div className="min-w-8 rounded-md bg-white border-slate-400 border w-8 h-8 flex items-center justify-center">
-                {list.title.substring(0, 1).toUpperCase()}
-              </div>
-              <div className="flex flex-col gap-1 overflow-hidden">
-                <Text as="p" className="!m-0 font-semibold">
-                  {list.title}
-                </Text>
-                <Text as="muted" className="truncate mb-2">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </Text>
-                <Progress
-                  value={50}
-                  className="h-2 border"
-                  bgColor="bg-green-800"
-                />
-              </div>
-            </div>
-          </div>
+          <ListCard key={list.id} id={list.id} title={list.title} />
         ))}
       </div>
     </div>
