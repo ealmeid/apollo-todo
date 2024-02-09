@@ -31,9 +31,11 @@ export type EditTaskInput = {
 
 export type List = {
   __typename?: 'List';
+  createdAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  taskIds: Array<Scalars['ID']['output']>;
+  tasks: Array<Task>;
   title: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
 };
 
 export type Mutation = {
@@ -44,7 +46,7 @@ export type Mutation = {
   createUser?: Maybe<User>;
   deleteList: Scalars['ID']['output'];
   deleteTask: Scalars['ID']['output'];
-  editList: Task;
+  editList: List;
   editTask: Task;
 };
 
@@ -98,9 +100,15 @@ export type PageInfo = {
 
 export type Query = {
   __typename?: 'Query';
+  getListById?: Maybe<List>;
   getListsByUser: Array<List>;
   getTaskById?: Maybe<Task>;
   getTasksByUser?: Maybe<TaskConnection>;
+};
+
+
+export type QueryGetListByIdArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -142,6 +150,13 @@ export type User = {
   username: Scalars['String']['output'];
 };
 
+export type GetListByIdWithTasksQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetListByIdWithTasksQuery = { __typename?: 'Query', getListById?: { __typename?: 'List', id: string, title: string, createdAt: string, tasks: Array<{ __typename?: 'Task', id: string, title: string, description: string, isCompleted: boolean }> } | null };
+
 export type CreateListMutationVariables = Exact<{
   title: Scalars['String']['input'];
 }>;
@@ -154,7 +169,7 @@ export type EditListMutationVariables = Exact<{
 }>;
 
 
-export type EditListMutation = { __typename?: 'Mutation', editList: { __typename?: 'Task', id: string, title: string } };
+export type EditListMutation = { __typename?: 'Mutation', editList: { __typename?: 'List', id: string, title: string } };
 
 export type DeleteListMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -202,7 +217,7 @@ export type CreateUserMutation = { __typename?: 'Mutation', createUser?: { __typ
 export type GetListsByUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetListsByUserQuery = { __typename?: 'Query', getListsByUser: Array<{ __typename?: 'List', id: string, title: string, taskIds: Array<string> }> };
+export type GetListsByUserQuery = { __typename?: 'Query', getListsByUser: Array<{ __typename?: 'List', id: string, title: string }> };
 
 export type GetTasksByUserQueryVariables = Exact<{
   first: Scalars['Int']['input'];
@@ -213,6 +228,54 @@ export type GetTasksByUserQueryVariables = Exact<{
 export type GetTasksByUserQuery = { __typename?: 'Query', getTasksByUser?: { __typename?: 'TaskConnection', edges: Array<{ __typename?: 'TaskEdge', node: { __typename?: 'Task', id: string, title: string, isCompleted: boolean, createdAt: string } }>, pageInfo?: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null } | null } | null };
 
 
+export const GetListByIdWithTasksDocument = gql`
+    query GetListByIdWithTasks($id: ID!) {
+  getListById(id: $id) {
+    id
+    title
+    createdAt
+    tasks {
+      id
+      title
+      description
+      isCompleted
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetListByIdWithTasksQuery__
+ *
+ * To run a query within a React component, call `useGetListByIdWithTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetListByIdWithTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetListByIdWithTasksQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetListByIdWithTasksQuery(baseOptions: Apollo.QueryHookOptions<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>(GetListByIdWithTasksDocument, options);
+      }
+export function useGetListByIdWithTasksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>(GetListByIdWithTasksDocument, options);
+        }
+export function useGetListByIdWithTasksSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>(GetListByIdWithTasksDocument, options);
+        }
+export type GetListByIdWithTasksQueryHookResult = ReturnType<typeof useGetListByIdWithTasksQuery>;
+export type GetListByIdWithTasksLazyQueryHookResult = ReturnType<typeof useGetListByIdWithTasksLazyQuery>;
+export type GetListByIdWithTasksSuspenseQueryHookResult = ReturnType<typeof useGetListByIdWithTasksSuspenseQuery>;
+export type GetListByIdWithTasksQueryResult = Apollo.QueryResult<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>;
 export const CreateListDocument = gql`
     mutation CreateList($title: String!) {
   createList(title: $title) {
@@ -489,7 +552,6 @@ export const GetListsByUserDocument = gql`
   getListsByUser {
     id
     title
-    taskIds
   }
 }
     `;

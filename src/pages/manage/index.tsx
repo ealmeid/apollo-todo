@@ -17,6 +17,7 @@ import { List, ListPlus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
 import { EditListNameDialog } from "@/components/custom/dialogs/EditListNameDialog";
+import { ListModal } from "@/components/custom/modals/ListModal";
 
 export const Manage = () => {
   const { isLoaded } = useAuth();
@@ -25,6 +26,7 @@ export const Manage = () => {
     { id: "", title: "" }
   );
   const [isOpen, setIsOpen] = useState(false);
+  const [isListModalOpen, setIsListModalOpen] = useState(false);
   const [deleteList] = useDeleteListMutation({
     onCompleted: () => {
       toast.success("List deleted successfully");
@@ -64,6 +66,11 @@ export const Manage = () => {
           Manage your lists, add, edit, and delete tasks from your lists.
         </Text>
         <div>
+          <ListModal
+            id={currentList.id}
+            open={isListModalOpen}
+            onClose={() => setIsListModalOpen(false)}
+          />
           <CreateListDialog
             trigger={
               <Button className="flex gap-1">
@@ -87,7 +94,14 @@ export const Manage = () => {
         {data?.getListsByUser.map((list) => (
           <ContextMenu key={list.id}>
             <ContextMenuTrigger>
-              <ListCard key={list.id} id={list.id} title={list.title} />
+              <ListCard
+                id={list.id}
+                title={list.title}
+                onClick={() => {
+                  setCurrentList({ id: list.id, title: list.title });
+                  setIsListModalOpen(true);
+                }}
+              />
             </ContextMenuTrigger>
             <ContextMenuContent>
               <ContextMenuItem

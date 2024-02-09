@@ -1,0 +1,13 @@
+query GetListByIdWithTasks($id: ID!) {
+  getListById(id: $id) {
+    id
+    title
+    createdAt
+    tasks {
+      id
+      title
+      description
+      isCompleted
+    }
+  }
+}

@@ -1,5 +1,4 @@
 import { QueryResolvers } from "@/graphql/types/server";
-import { List } from "@prisma/client";
 
 export const getListsByUser: QueryResolvers["getListsByUser"] = async (
   _parent,

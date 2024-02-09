@@ -4,7 +4,9 @@ export const typeDefs = gql`
   type List {
     id: ID!
     title: String!
-    taskIds: [ID!]!
+    tasks: [Task!]!
+    createdAt: String!
+    updatedAt: String!
   }
 
   input EditListInput {
@@ -13,6 +15,7 @@ export const typeDefs = gql`
   }
 
   type Query {
+    getListById(id: ID!): List
     getListsByUser: [List!]!
   }
 

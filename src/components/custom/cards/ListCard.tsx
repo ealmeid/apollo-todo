@@ -1,16 +1,17 @@
 import { Text, Progress } from "../..";
 
 interface ListCardProps {
-  key: string;
   id: string;
   title: string;
+  onClick?: () => void;
 }
 
-export const ListCard: React.FC<ListCardProps> = ({ key, id, title }) => {
+export const ListCard: React.FC<ListCardProps> = ({ id, title, onClick }) => {
   return (
     <div
-      className="cursor-pointer bg-slate-100 flex items-center gap-4 w-full px-6 py-4 border-slate-200 border rounded-lg min-h-16 hover:shadow-lg transition duration-200 "
-      key={key}
+      className="cursor-pointer bg-slate-100 flex items-center gap-4 w-full p-6 border-slate-200 border rounded-lg min-h-16 hover:shadow-lg transition duration-200 "
+      key={id}
+      onClick={onClick}
     >
       <div className="flex items-start gap-4 w-full">
         <div className="min-w-8 rounded-md bg-white border-slate-400 border w-8 h-8 flex items-center justify-center">

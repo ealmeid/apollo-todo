@@ -31,9 +31,11 @@ export type EditTaskInput = {
 
 export type List = {
   __typename?: 'List';
+  createdAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  taskIds: Array<Scalars['ID']['output']>;
+  tasks: Array<Task>;
   title: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
 };
 
 export type Mutation = {
@@ -44,7 +46,7 @@ export type Mutation = {
   createUser?: Maybe<User>;
   deleteList: Scalars['ID']['output'];
   deleteTask: Scalars['ID']['output'];
-  editList: Task;
+  editList: List;
   editTask: Task;
 };
 
@@ -98,9 +100,15 @@ export type PageInfo = {
 
 export type Query = {
   __typename?: 'Query';
+  getListById?: Maybe<List>;
   getListsByUser: Array<List>;
   getTaskById?: Maybe<Task>;
   getTasksByUser?: Maybe<TaskConnection>;
+};
+
+
+export type QueryGetListByIdArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -248,9 +256,11 @@ export type ResolversParentTypes = {
 };
 
 export type ListResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['List'] = ResolversParentTypes['List']> = {
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  taskIds?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
+  tasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -261,7 +271,7 @@ export type MutationResolvers<ContextType = ApolloContext, ParentType extends Re
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'clerkId'>>;
   deleteList?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteListArgs, 'id'>>;
   deleteTask?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'id'>>;
-  editList?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationEditListArgs, 'input'>>;
+  editList?: Resolver<ResolversTypes['List'], ParentType, ContextType, RequireFields<MutationEditListArgs, 'input'>>;
   editTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationEditTaskArgs, 'input'>>;
 };
 
@@ -273,6 +283,7 @@ export type PageInfoResolvers<ContextType = ApolloContext, ParentType extends Re
 };
 
 export type QueryResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getListById?: Resolver<Maybe<ResolversTypes['List']>, ParentType, ContextType, RequireFields<QueryGetListByIdArgs, 'id'>>;
   getListsByUser?: Resolver<Array<ResolversTypes['List']>, ParentType, ContextType>;
   getTaskById?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryGetTaskByIdArgs, 'id'>>;
   getTasksByUser?: Resolver<Maybe<ResolversTypes['TaskConnection']>, ParentType, ContextType, RequireFields<QueryGetTasksByUserArgs, 'first'>>;
