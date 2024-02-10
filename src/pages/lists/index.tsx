@@ -18,8 +18,10 @@ import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
 import { EditListNameDialog } from "@/components/custom/dialogs/EditListNameDialog";
 import { ListModal } from "@/components/custom/modals/ListModal";
+import { useRouter } from "next/router";
 
 export const Manage = () => {
+  const router = useRouter();
   const { isLoaded } = useAuth();
   const { data, refetch } = useGetListsByUserQuery();
   const [currentList, setCurrentList] = useState<{ id: string; title: string }>(
@@ -98,8 +100,7 @@ export const Manage = () => {
                 id={list.id}
                 title={list.title}
                 onClick={() => {
-                  setCurrentList({ id: list.id, title: list.title });
-                  setIsListModalOpen(true);
+                  router.push(`/lists/${list.id}`);
                 }}
               />
             </ContextMenuTrigger>
