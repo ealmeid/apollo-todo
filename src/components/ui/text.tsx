@@ -9,14 +9,16 @@ export interface TextProps extends React.InputHTMLAttributes<HTMLDivElement> {
     | "h4"
     | "h5"
     | "p"
+    | "link"
     | "blockquote"
     | "code"
     | "lead"
     | "muted";
+  href?: string;
 }
 
 const Text = React.forwardRef<HTMLDivElement, TextProps>(
-  ({ className, as = "p", children, ...props }, ref) => {
+  ({ className, as = "p", href = "#", children, ...props }, ref) => {
     switch (as) {
       case "h1":
         return (
@@ -67,6 +69,15 @@ const Text = React.forwardRef<HTMLDivElement, TextProps>(
           <p className={cn(className, "leading-7 [&:not(:first-child)]:mt-6")}>
             {children}
           </p>
+        );
+      case "link":
+        return (
+          <a
+            href={href}
+            className="font-medium text-primary underline underline-offset-4"
+          >
+            {children}
+          </a>
         );
       case "blockquote":
         return (
