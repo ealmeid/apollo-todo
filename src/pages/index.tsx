@@ -10,6 +10,7 @@ import {
   TaskCard,
   TaskModal,
   MotionTaskCard,
+  LoadMoreButton,
 } from "@/components";
 import {
   GetTasksByUserQueryResult,
@@ -18,7 +19,6 @@ import {
 } from "@/graphql/types/client";
 import { Task } from "@prisma/client";
 import { useAuth } from "@clerk/nextjs";
-import { ArrowDown, Loader2 } from "lucide-react";
 
 type GetTasksByUserData = NonNullable<
   GetTasksByUserQueryResult["data"]
@@ -157,29 +157,17 @@ export const Home = () => {
           </div>
         ))}
 
-      {isLoadingMore && (
-        <Loader2 className="animate-spin" size={32} color="currentColor" />
-      )}
-
       {data?.getTasksByUser?.pageInfo?.hasNextPage && !isLoadingMore && (
-        <Button
-          variant="outline"
-          className="flex gap-2"
-          onClick={() => {
-            setIsLoadingMore(true);
+        <LoadMoreButton
+          onLoadMore={() =>
             fetchMore({
               variables: {
                 after: data?.getTasksByUser?.pageInfo?.endCursor,
                 first: LIMIT,
               },
-            }).finally(() => {
-              setIsLoadingMore(false);
-            });
-          }}
-        >
-          <ArrowDown className="w-5" />
-          Load More
-        </Button>
+            })
+          }
+        />
       )}
     </div>
   );
