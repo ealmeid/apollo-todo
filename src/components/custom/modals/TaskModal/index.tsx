@@ -5,7 +5,7 @@ import {
   useDeleteTaskMutation,
   useGetListsByUserQuery,
 } from "@/graphql/types/client";
-import { Dialog, DialogContent, Button, Text } from "../..";
+import { Dialog, DialogContent, Button, Text } from "../../..";
 import { toast } from "sonner";
 import { useDeleteTask } from "@/lib/apollo";
 import { useApolloClient } from "@apollo/client";
@@ -34,15 +34,6 @@ export const TaskModal: React.FC<TaskDialogProps> = ({
   useEffect(() => {
     setIsOpen(open);
   }, [open]);
-
-  const { data } = useGetListsByUserQuery({
-    onCompleted: ({ getListsByUser }) => {
-      const listIds = getListsByUser
-        .filter((list) => list.taskIds.includes(id))
-        .map((list) => list.id);
-      setSelectedLists(listIds);
-    },
-  });
 
   const [selectedLists, setSelectedLists] = useState<string[]>([]);
 

@@ -1,0 +1,6 @@
+# query GetListsByTaskId($id: ID!) {
+#   getListsByTaskId(id: $id) {
+#     id
+#     title
+#   }
+# }

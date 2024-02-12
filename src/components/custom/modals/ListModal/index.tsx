@@ -3,6 +3,7 @@ import { Calendar, Loader2 } from "lucide-react";
 import { useGetListByIdWithTasksQuery } from "@/graphql/types/client";
 import { Dialog, DialogContent, Text, Separator, Checkbox } from "../../..";
 import dayjs from "dayjs";
+import { useAuth } from "@clerk/nextjs";
 
 interface ListDialogProps {
   id: string;
@@ -15,16 +16,24 @@ export const ListModal: React.FC<ListDialogProps> = ({
   open = false,
   onClose = () => {},
 }) => {
+  const { isLoaded } = useAuth();
   const [isOpen, setIsOpen] = useState(open);
-  const { data, loading, error } = useGetListByIdWithTasksQuery({
+  const { data, refetch, loading, error } = useGetListByIdWithTasksQuery({
     variables: {
       id,
+      first: 2,
     },
   });
 
   useEffect(() => {
     setIsOpen(open);
   }, [open]);
+
+  useEffect(() => {
+    if (!data) {
+      refetch();
+    }
+  }, [data, isLoaded, refetch]);
 
   return (
     <Dialog open={isOpen} modal>
@@ -56,10 +65,10 @@ export const ListModal: React.FC<ListDialogProps> = ({
             </div>
             <Separator className="my-2" />
             <Text as="h4">Tasks</Text>
-            {data?.getListById?.tasks.length === 0 && (
+            {data?.getListById?.tasks?.edges.length === 0 && (
               <Text as="muted">No tasks found</Text>
             )}
-            {data?.getListById?.tasks.map((task) => (
+            {data?.getListById?.tasks?.edges.map(({ node: task }) => (
               <div
                 key={task.id}
                 className="flex items-center rounded-md bg-slate-100 px-4 p-2 gap-4 max-w-[50%] border"
