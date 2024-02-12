@@ -33,9 +33,15 @@ export type List = {
   __typename?: 'List';
   createdAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  tasks: Array<Task>;
+  tasks?: Maybe<TaskConnection>;
   title: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
+};
+
+
+export type ListTasksArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first: Scalars['Int']['input'];
 };
 
 export type Mutation = {
@@ -258,7 +264,7 @@ export type ResolversParentTypes = {
 export type ListResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['List'] = ResolversParentTypes['List']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  tasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>;
+  tasks?: Resolver<Maybe<ResolversTypes['TaskConnection']>, ParentType, ContextType, RequireFields<ListTasksArgs, 'first'>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

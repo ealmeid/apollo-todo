@@ -26,6 +26,24 @@ export const createApolloClient = (
     link: httpLink,
     cache: new InMemoryCache({
       typePolicies: {
+        List: {
+          fields: {
+            tasks: {
+              keyArgs: false,
+              merge(existing = {}, incoming = {}) {
+                const existingEdges = existing.edges ?? [];
+                const incomingEdges = incoming.edges ?? [];
+
+                const edges = [...existingEdges, ...incomingEdges];
+
+                return {
+                  ...incoming,
+                  edges,
+                };
+              },
+            },
+          },
+        },
         Query: {
           fields: {
             getTasksByUser: {

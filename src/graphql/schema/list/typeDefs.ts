@@ -4,7 +4,7 @@ export const typeDefs = gql`
   type List {
     id: ID!
     title: String!
-    tasks: [Task!]!
+    tasks(first: Int!, after: String): TaskConnection
     createdAt: String!
     updatedAt: String!
   }

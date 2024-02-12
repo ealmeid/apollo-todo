@@ -33,9 +33,15 @@ export type List = {
   __typename?: 'List';
   createdAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  tasks: Array<Task>;
+  tasks?: Maybe<TaskConnection>;
   title: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
+};
+
+
+export type ListTasksArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first: Scalars['Int']['input'];
 };
 
 export type Mutation = {
@@ -150,13 +156,6 @@ export type User = {
   username: Scalars['String']['output'];
 };
 
-export type GetListByIdWithTasksQueryVariables = Exact<{
-  id: Scalars['ID']['input'];
-}>;
-
-
-export type GetListByIdWithTasksQuery = { __typename?: 'Query', getListById?: { __typename?: 'List', id: string, title: string, createdAt: string, tasks: Array<{ __typename?: 'Task', id: string, title: string, description: string, isCompleted: boolean }> } | null };
-
 export type CreateListMutationVariables = Exact<{
   title: Scalars['String']['input'];
 }>;
@@ -227,55 +226,16 @@ export type GetTasksByUserQueryVariables = Exact<{
 
 export type GetTasksByUserQuery = { __typename?: 'Query', getTasksByUser?: { __typename?: 'TaskConnection', edges: Array<{ __typename?: 'TaskEdge', node: { __typename?: 'Task', id: string, title: string, isCompleted: boolean, createdAt: string } }>, pageInfo?: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null } | null } | null };
 
+export type GetListByIdWithTasksQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+  first: Scalars['Int']['input'];
+  after?: InputMaybe<Scalars['String']['input']>;
+}>;
 
-export const GetListByIdWithTasksDocument = gql`
-    query GetListByIdWithTasks($id: ID!) {
-  getListById(id: $id) {
-    id
-    title
-    createdAt
-    tasks {
-      id
-      title
-      description
-      isCompleted
-    }
-  }
-}
-    `;
 
-/**
- * __useGetListByIdWithTasksQuery__
- *
- * To run a query within a React component, call `useGetListByIdWithTasksQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetListByIdWithTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetListByIdWithTasksQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetListByIdWithTasksQuery(baseOptions: Apollo.QueryHookOptions<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>(GetListByIdWithTasksDocument, options);
-      }
-export function useGetListByIdWithTasksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>(GetListByIdWithTasksDocument, options);
-        }
-export function useGetListByIdWithTasksSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>(GetListByIdWithTasksDocument, options);
-        }
-export type GetListByIdWithTasksQueryHookResult = ReturnType<typeof useGetListByIdWithTasksQuery>;
-export type GetListByIdWithTasksLazyQueryHookResult = ReturnType<typeof useGetListByIdWithTasksLazyQuery>;
-export type GetListByIdWithTasksSuspenseQueryHookResult = ReturnType<typeof useGetListByIdWithTasksSuspenseQuery>;
-export type GetListByIdWithTasksQueryResult = Apollo.QueryResult<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>;
+export type GetListByIdWithTasksQuery = { __typename?: 'Query', getListById?: { __typename?: 'List', id: string, title: string, createdAt: string, tasks?: { __typename?: 'TaskConnection', edges: Array<{ __typename?: 'TaskEdge', node: { __typename?: 'Task', id: string, title: string, description: string, isCompleted: boolean } }>, pageInfo?: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null } | null } | null } | null };
+
+
 export const CreateListDocument = gql`
     mutation CreateList($title: String!) {
   createList(title: $title) {
@@ -639,3 +599,61 @@ export type GetTasksByUserQueryHookResult = ReturnType<typeof useGetTasksByUserQ
 export type GetTasksByUserLazyQueryHookResult = ReturnType<typeof useGetTasksByUserLazyQuery>;
 export type GetTasksByUserSuspenseQueryHookResult = ReturnType<typeof useGetTasksByUserSuspenseQuery>;
 export type GetTasksByUserQueryResult = Apollo.QueryResult<GetTasksByUserQuery, GetTasksByUserQueryVariables>;
+export const GetListByIdWithTasksDocument = gql`
+    query GetListByIdWithTasks($id: ID!, $first: Int!, $after: String) {
+  getListById(id: $id) {
+    id
+    title
+    createdAt
+    tasks(first: $first, after: $after) {
+      edges {
+        node {
+          id
+          title
+          description
+          isCompleted
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetListByIdWithTasksQuery__
+ *
+ * To run a query within a React component, call `useGetListByIdWithTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetListByIdWithTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetListByIdWithTasksQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function useGetListByIdWithTasksQuery(baseOptions: Apollo.QueryHookOptions<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>(GetListByIdWithTasksDocument, options);
+      }
+export function useGetListByIdWithTasksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>(GetListByIdWithTasksDocument, options);
+        }
+export function useGetListByIdWithTasksSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>(GetListByIdWithTasksDocument, options);
+        }
+export type GetListByIdWithTasksQueryHookResult = ReturnType<typeof useGetListByIdWithTasksQuery>;
+export type GetListByIdWithTasksLazyQueryHookResult = ReturnType<typeof useGetListByIdWithTasksLazyQuery>;
+export type GetListByIdWithTasksSuspenseQueryHookResult = ReturnType<typeof useGetListByIdWithTasksSuspenseQuery>;
+export type GetListByIdWithTasksQueryResult = Apollo.QueryResult<GetListByIdWithTasksQuery, GetListByIdWithTasksQueryVariables>;

@@ -1,13 +1,21 @@
-query GetListByIdWithTasks($id: ID!) {
+query GetListByIdWithTasks($id: ID!, $first: Int!, $after: String) {
   getListById(id: $id) {
     id
     title
     createdAt
-    tasks {
-      id
-      title
-      description
-      isCompleted
+    tasks(first: $first, after: $after) {
+      edges {
+        node {
+          id
+          title
+          description
+          isCompleted
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
     }
   }
 }

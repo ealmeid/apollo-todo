@@ -1,12 +1,55 @@
 import { ListResolvers } from "@/graphql/types/server";
+import { encodeCursor, decodeCursor } from "../../../helpers";
 
 export const tasks: ListResolvers["tasks"] = async (
   _parent,
-  _args,
+  { first, after },
   { prisma, user },
   _info
 ) => {
+  let conditions: any = {
+    take: first + 1,
+    orderBy: {
+      task: {
+        createdAt: "desc",
+      },
+    },
+    where: {
+      AND: [
+        {
+          task: {
+            userId: user.id,
+          },
+        },
+      ],
+    },
+  };
+
+  if (after) {
+    const afterId = decodeCursor(after).id;
+
+    const afterTask = await prisma.task.findUnique({
+      where: { id: afterId },
+    });
+
+    if (afterTask) {
+      conditions.where = {
+        AND: [
+          ...conditions.where.AND,
+          {
+            task: {
+              createdAt: {
+                lt: new Date(afterTask.createdAt),
+              },
+            },
+          },
+        ],
+      };
+    }
+  }
+
   const listId = _parent.id;
+
   const listWithTasks = await prisma.list.findUnique({
     where: {
       id: listId,
@@ -14,6 +57,7 @@ export const tasks: ListResolvers["tasks"] = async (
     },
     include: {
       tasks: {
+        ...conditions,
         select: {
           task: true,
         },
@@ -27,5 +71,21 @@ export const tasks: ListResolvers["tasks"] = async (
 
   const tasksForList = listWithTasks.tasks.map(({ task }) => task);
 
-  return tasksForList;
+  const edges = tasksForList.map((task) => ({
+    node: { ...task, createdAt: task.createdAt.toISOString() },
+    cursor: encodeCursor(task.id, task.createdAt.toISOString()),
+  }));
+
+  const startCursor = edges.length > 0 ? edges[0].cursor : null;
+  const endCursor = edges.length > 0 ? edges[edges.length - 1].cursor : null;
+  const hasNextPage = tasksForList.length > first;
+
+  return {
+    edges,
+    pageInfo: {
+      startCursor,
+      endCursor,
+      hasNextPage: hasNextPage,
+    },
+  };
 };
