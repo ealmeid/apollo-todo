@@ -1,5 +1,6 @@
 import { ListResolvers } from "@/graphql/types/server";
 import { encodeCursor, decodeCursor } from "../../../helpers";
+import { Prisma } from "@prisma/client";
 
 export const tasks: ListResolvers["tasks"] = async (
   _parent,
@@ -7,7 +8,7 @@ export const tasks: ListResolvers["tasks"] = async (
   { prisma, user },
   _info
 ) => {
-  let conditions: any = {
+  let conditions: Prisma.ListInclude["tasks"] = {
     take: first + 1,
     orderBy: {
       task: {
@@ -35,7 +36,7 @@ export const tasks: ListResolvers["tasks"] = async (
     if (afterTask) {
       conditions.where = {
         AND: [
-          ...conditions.where.AND,
+          ...((conditions?.where?.AND ?? []) as Prisma.TaskToListWhereInput[]),
           {
             task: {
               createdAt: {
@@ -71,6 +72,12 @@ export const tasks: ListResolvers["tasks"] = async (
 
   const tasksForList = listWithTasks.tasks.map(({ task }) => task);
 
+  const hasNextPage = tasksForList.length > first;
+
+  if (tasksForList.length > 1) {
+    tasksForList.pop();
+  }
+
   const edges = tasksForList.map((task) => ({
     node: { ...task, createdAt: task.createdAt.toISOString() },
     cursor: encodeCursor(task.id, task.createdAt.toISOString()),
@@ -78,7 +85,6 @@ export const tasks: ListResolvers["tasks"] = async (
 
   const startCursor = edges.length > 0 ? edges[0].cursor : null;
   const endCursor = edges.length > 0 ? edges[edges.length - 1].cursor : null;
-  const hasNextPage = tasksForList.length > first;
 
   return {
     edges,
