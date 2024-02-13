@@ -1,13 +1,16 @@
 import { Button } from "@/components";
+import { cn } from "@/lib/utils";
 import { ArrowDown, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 interface LoadMoreButtonProps {
   onLoadMore: () => Promise<any>;
+  className?: string;
 }
 
 export const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
   onLoadMore,
+  className = "",
 }) => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
@@ -17,7 +20,7 @@ export const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
   return (
     <Button
       variant="outline"
-      className="flex gap-2"
+      className={cn(className, "flex gap-2")}
       onClick={() => {
         setIsLoadingMore(true);
         onLoadMore().finally(() => {
