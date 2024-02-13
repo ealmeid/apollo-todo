@@ -1,5 +1,5 @@
-query GetTasksByUser($first: Int!, $after: String) {
-  getTasksByUser(first: $first, after: $after) {
+query GetTasksByUser($first: Int!, $after: String, $orderBy: TaskOrderBy) {
+  getTasksByUser(first: $first, after: $after, orderBy: $orderBy) {
     edges {
       node {
         id

@@ -3,15 +3,17 @@ import { encodeCursor, decodeCursor } from "../../../helpers";
 
 export const getTasksByUser: QueryResolvers["getTasksByUser"] = async (
   _parent,
-  { first, after },
+  { first, after, orderBy = "createdAt_desc" },
   { prisma, user },
   _info
 ) => {
+  const [sort, direction] = (orderBy as string).split("_");
+
+  const orderByObj = { [sort]: direction };
+
   let conditions: any = {
     take: first + 1,
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: { ...orderByObj },
     where: {
       AND: [{ userId: user.id }],
     },
@@ -25,12 +27,18 @@ export const getTasksByUser: QueryResolvers["getTasksByUser"] = async (
     });
 
     if (afterTask) {
+      let andObj: Record<string, any> = {
+        createdAt: {
+          [direction === "asc" ? "gt" : "lt"]: new Date(afterTask.createdAt),
+        },
+      };
+
       conditions.where = {
         AND: [
           ...conditions.where.AND,
           {
-            createdAt: {
-              lt: new Date(afterTask.createdAt),
+            [sort]: {
+              ...andObj[sort],
             },
           },
         ],

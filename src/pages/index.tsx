@@ -11,14 +11,21 @@ import {
   TaskModal,
   MotionTaskCard,
   LoadMoreButton,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@/components";
 import {
   GetTasksByUserQueryResult,
+  TaskOrderBy,
   useCreateTaskMutation,
   useGetTasksByUserQuery,
 } from "@/graphql/types/client";
 import { Task } from "@prisma/client";
 import { useAuth } from "@clerk/nextjs";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 type GetTasksByUserData = NonNullable<
   GetTasksByUserQueryResult["data"]
@@ -26,8 +33,11 @@ type GetTasksByUserData = NonNullable<
 
 export const Home = () => {
   const { isLoaded } = useAuth();
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isLoadingMore] = useState(false);
   const [todoValue, setTodoValue] = useState("");
+  const [sortOrder, setSortOrder] = useState<TaskOrderBy>(
+    TaskOrderBy.CreatedatDesc
+  );
   const [currentTask, setCurrentTask] = useState<
     Pick<Task, "id" | "title" | "createdAt">
   >({
@@ -41,6 +51,7 @@ export const Home = () => {
   const { data, loading, refetch, fetchMore, error } = useGetTasksByUserQuery({
     variables: {
       first: LIMIT,
+      orderBy: sortOrder,
     },
   });
 
@@ -132,28 +143,47 @@ export const Home = () => {
           <Text as="p">No todos yet!</Text>
         ) : (
           <div className="flex flex-col gap-4 max-w-[300px] w-full">
-            <AnimatePresence mode={"popLayout"}>
-              {data?.getTasksByUser?.edges.map(({ node: task }) => (
-                <MotionTaskCard
-                  layout
-                  key={task.id}
-                  id={task.id}
-                  name={task.title}
-                  isCompleted={task.isCompleted}
-                  onClick={() => {
-                    setCurrentTask({
-                      id: task.id,
-                      title: task.title,
-                      createdAt: new Date(task?.createdAt),
-                    });
-                    setIsOpen(true);
-                  }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.8, opacity: 0 }}
-                  transition={{ type: "spring" }}
-                />
-              ))}
-            </AnimatePresence>
+            <Select onValueChange={(val) => setSortOrder(val as TaskOrderBy)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+              <SelectContent className="mr-auto">
+                <SelectItem value={TaskOrderBy.CreatedatDesc}>
+                  <div className="flex items-center gap-2 mr-auto">
+                    <ArrowUp className="w-4 h-4" />
+                    Newest
+                  </div>
+                </SelectItem>
+                <SelectItem value={TaskOrderBy.CreatedatAsc}>
+                  <div className="flex items-center gap-2 mr-auto">
+                    <ArrowDown className="w-4 h-4" />
+                    Oldest
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            {/* <AnimatePresence mode="wait"> */}
+            {data?.getTasksByUser?.edges.map(({ node: task }) => (
+              <MotionTaskCard
+                layout
+                key={task.id}
+                id={task.id}
+                name={task.title}
+                isCompleted={task.isCompleted}
+                onClick={() => {
+                  setCurrentTask({
+                    id: task.id,
+                    title: task.title,
+                    createdAt: new Date(task?.createdAt),
+                  });
+                  setIsOpen(true);
+                }}
+                // animate={{ scale: 1, opacity: 1 }}
+                // exit={{ scale: 0.8, opacity: 0 }}
+                // transition={{ type: "spring" }}
+              />
+            ))}
+            {/* </AnimatePresence> */}
           </div>
         ))}
 

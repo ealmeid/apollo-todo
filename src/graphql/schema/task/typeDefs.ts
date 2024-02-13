@@ -9,6 +9,11 @@ export const typeDefs = gql`
     createdAt: String!
   }
 
+  enum TaskOrderBy {
+    CREATEDAT_ASC
+    CREATEDAT_DESC
+  }
+
   input EditTaskInput {
     id: ID!
     title: String
@@ -18,7 +23,11 @@ export const typeDefs = gql`
 
   type Query {
     getTaskById(id: ID!): Task
-    getTasksByUser(first: Int!, after: String): TaskConnection
+    getTasksByUser(
+      first: Int!
+      after: String
+      orderBy: TaskOrderBy
+    ): TaskConnection
   }
 
   type Mutation {

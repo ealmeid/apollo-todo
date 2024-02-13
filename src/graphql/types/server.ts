@@ -126,6 +126,7 @@ export type QueryGetTaskByIdArgs = {
 export type QueryGetTasksByUserArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first: Scalars['Int']['input'];
+  orderBy?: InputMaybe<TaskOrderBy>;
 };
 
 export type Task = {
@@ -148,6 +149,11 @@ export type TaskEdge = {
   cursor: Scalars['String']['output'];
   node: Task;
 };
+
+export enum TaskOrderBy {
+  CreatedatAsc = 'CREATEDAT_ASC',
+  CreatedatDesc = 'CREATEDAT_DESC'
+}
 
 export type User = {
   __typename?: 'User';
@@ -240,6 +246,7 @@ export type ResolversTypes = {
   Task: ResolverTypeWrapper<Task>;
   TaskConnection: ResolverTypeWrapper<TaskConnection>;
   TaskEdge: ResolverTypeWrapper<TaskEdge>;
+  TaskOrderBy: TaskOrderBy;
   User: ResolverTypeWrapper<User>;
 };
 

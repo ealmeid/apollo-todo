@@ -126,6 +126,7 @@ export type QueryGetTaskByIdArgs = {
 export type QueryGetTasksByUserArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first: Scalars['Int']['input'];
+  orderBy?: InputMaybe<TaskOrderBy>;
 };
 
 export type Task = {
@@ -148,6 +149,11 @@ export type TaskEdge = {
   cursor: Scalars['String']['output'];
   node: Task;
 };
+
+export enum TaskOrderBy {
+  CreatedatAsc = 'CREATEDAT_ASC',
+  CreatedatDesc = 'CREATEDAT_DESC'
+}
 
 export type User = {
   __typename?: 'User';
@@ -221,6 +227,7 @@ export type GetListsByUserQuery = { __typename?: 'Query', getListsByUser: Array<
 export type GetTasksByUserQueryVariables = Exact<{
   first: Scalars['Int']['input'];
   after?: InputMaybe<Scalars['String']['input']>;
+  orderBy?: InputMaybe<TaskOrderBy>;
 }>;
 
 
@@ -548,8 +555,8 @@ export type GetListsByUserLazyQueryHookResult = ReturnType<typeof useGetListsByU
 export type GetListsByUserSuspenseQueryHookResult = ReturnType<typeof useGetListsByUserSuspenseQuery>;
 export type GetListsByUserQueryResult = Apollo.QueryResult<GetListsByUserQuery, GetListsByUserQueryVariables>;
 export const GetTasksByUserDocument = gql`
-    query GetTasksByUser($first: Int!, $after: String) {
-  getTasksByUser(first: $first, after: $after) {
+    query GetTasksByUser($first: Int!, $after: String, $orderBy: TaskOrderBy) {
+  getTasksByUser(first: $first, after: $after, orderBy: $orderBy) {
     edges {
       node {
         id
@@ -580,6 +587,7 @@ export const GetTasksByUserDocument = gql`
  *   variables: {
  *      first: // value for 'first'
  *      after: // value for 'after'
+ *      orderBy: // value for 'orderBy'
  *   },
  * });
  */
