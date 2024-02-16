@@ -26,6 +26,7 @@ import {
 import { Task } from "@prisma/client";
 import { useAuth } from "@clerk/nextjs";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { debounce } from "lodash";
 
 type GetTasksByUserData = NonNullable<
   GetTasksByUserQueryResult["data"]
@@ -35,6 +36,7 @@ export const Home = () => {
   const { isLoaded } = useAuth();
   const [isLoadingMore] = useState(false);
   const [todoValue, setTodoValue] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<TaskOrderBy>(
     TaskOrderBy.CreatedatDesc
   );
@@ -48,10 +50,19 @@ export const Home = () => {
 
   const LIMIT = 3;
 
+  const onChange = (e: any) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const debouncedSetSearchTerm = debounce(onChange, 1500);
+
   const { data, loading, refetch, fetchMore, error } = useGetTasksByUserQuery({
     variables: {
       first: LIMIT,
       orderBy: sortOrder,
+      filterBy: {
+        title: searchTerm,
+      },
     },
   });
 
@@ -136,56 +147,59 @@ export const Home = () => {
         onClose={() => setIsOpen(false)}
       />
 
-      {!loading &&
-        !error &&
-        data &&
-        (data?.getTasksByUser?.edges.length === 0 ? (
-          <Text as="p">No todos yet!</Text>
-        ) : (
-          <div className="flex flex-col gap-4 max-w-[300px] w-full">
-            <Select onValueChange={(val) => setSortOrder(val as TaskOrderBy)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Sort By" />
-              </SelectTrigger>
-              <SelectContent className="mr-auto">
-                <SelectItem value={TaskOrderBy.CreatedatDesc}>
-                  <div className="flex items-center gap-2 mr-auto">
-                    <ArrowUp className="w-4 h-4" />
-                    Newest
-                  </div>
-                </SelectItem>
-                <SelectItem value={TaskOrderBy.CreatedatAsc}>
-                  <div className="flex items-center gap-2 mr-auto">
-                    <ArrowDown className="w-4 h-4" />
-                    Oldest
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            {/* <AnimatePresence mode="wait"> */}
-            {data?.getTasksByUser?.edges.map(({ node: task }) => (
-              <MotionTaskCard
-                layout
-                key={task.id}
-                id={task.id}
-                name={task.title}
-                isCompleted={task.isCompleted}
-                onClick={() => {
-                  setCurrentTask({
-                    id: task.id,
-                    title: task.title,
-                    createdAt: new Date(task?.createdAt),
-                  });
-                  setIsOpen(true);
-                }}
-                // animate={{ scale: 1, opacity: 1 }}
-                // exit={{ scale: 0.8, opacity: 0 }}
-                // transition={{ type: "spring" }}
-              />
-            ))}
-            {/* </AnimatePresence> */}
-          </div>
-        ))}
+      <div className="flex flex-col gap-4 max-w-[300px] w-full">
+        <Input placeholder="Search..." onChange={debouncedSetSearchTerm} />
+        {!loading &&
+          !error &&
+          data &&
+          (data?.getTasksByUser?.edges.length === 0 ? (
+            <Text as="p">No todos yet!</Text>
+          ) : (
+            <>
+              <Select onValueChange={(val) => setSortOrder(val as TaskOrderBy)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Sort By" />
+                </SelectTrigger>
+                <SelectContent className="mr-auto">
+                  <SelectItem value={TaskOrderBy.CreatedatDesc}>
+                    <div className="flex items-center gap-2 mr-auto">
+                      <ArrowUp className="w-4 h-4" />
+                      Newest
+                    </div>
+                  </SelectItem>
+                  <SelectItem value={TaskOrderBy.CreatedatAsc}>
+                    <div className="flex items-center gap-2 mr-auto">
+                      <ArrowDown className="w-4 h-4" />
+                      Oldest
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              {/* <AnimatePresence mode="wait"> */}
+              {data?.getTasksByUser?.edges.map(({ node: task }) => (
+                <MotionTaskCard
+                  layout
+                  key={task.id}
+                  id={task.id}
+                  name={task.title}
+                  isCompleted={task.isCompleted}
+                  onClick={() => {
+                    setCurrentTask({
+                      id: task.id,
+                      title: task.title,
+                      createdAt: new Date(task?.createdAt),
+                    });
+                    setIsOpen(true);
+                  }}
+                  // animate={{ scale: 1, opacity: 1 }}
+                  // exit={{ scale: 0.8, opacity: 0 }}
+                  // transition={{ type: "spring" }}
+                />
+              ))}
+              {/* </AnimatePresence> */}
+            </>
+          ))}
+      </div>
 
       {data?.getTasksByUser?.pageInfo?.hasNextPage && !isLoadingMore && (
         <LoadMoreButton

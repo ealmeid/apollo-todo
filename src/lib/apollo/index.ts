@@ -47,7 +47,7 @@ export const createApolloClient = (
         Query: {
           fields: {
             getTasksByUser: {
-              keyArgs: ["orderBy"],
+              keyArgs: ["orderBy", "filterBy"],
               merge(existing = {}, incoming = {}) {
                 const existingEdges = existing.edges ?? [];
                 const incomingEdges = incoming.edges ?? [];

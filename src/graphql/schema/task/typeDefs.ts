@@ -14,6 +14,11 @@ export const typeDefs = gql`
     CREATEDAT_DESC
   }
 
+  input TaskFilters {
+    title: String
+    isCompleted: Boolean
+  }
+
   input EditTaskInput {
     id: ID!
     title: String
@@ -27,6 +32,7 @@ export const typeDefs = gql`
       first: Int!
       after: String
       orderBy: TaskOrderBy
+      filterBy: TaskFilters
     ): TaskConnection
   }
 

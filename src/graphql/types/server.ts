@@ -125,6 +125,7 @@ export type QueryGetTaskByIdArgs = {
 
 export type QueryGetTasksByUserArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
+  filterBy?: InputMaybe<TaskFilters>;
   first: Scalars['Int']['input'];
   orderBy?: InputMaybe<TaskOrderBy>;
 };
@@ -148,6 +149,11 @@ export type TaskEdge = {
   __typename?: 'TaskEdge';
   cursor: Scalars['String']['output'];
   node: Task;
+};
+
+export type TaskFilters = {
+  isCompleted?: InputMaybe<Scalars['Boolean']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum TaskOrderBy {
@@ -246,6 +252,7 @@ export type ResolversTypes = {
   Task: ResolverTypeWrapper<Task>;
   TaskConnection: ResolverTypeWrapper<TaskConnection>;
   TaskEdge: ResolverTypeWrapper<TaskEdge>;
+  TaskFilters: TaskFilters;
   TaskOrderBy: TaskOrderBy;
   User: ResolverTypeWrapper<User>;
 };
@@ -265,6 +272,7 @@ export type ResolversParentTypes = {
   Task: Task;
   TaskConnection: TaskConnection;
   TaskEdge: TaskEdge;
+  TaskFilters: TaskFilters;
   User: User;
 };
 

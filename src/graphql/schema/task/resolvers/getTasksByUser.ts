@@ -1,9 +1,10 @@
 import { QueryResolvers } from "@/graphql/types/server";
 import { encodeCursor, decodeCursor } from "../../../helpers";
+import { filter } from "lodash";
 
 export const getTasksByUser: QueryResolvers["getTasksByUser"] = async (
   _parent,
-  { first, after, orderBy = "createdAt_desc" },
+  { first, after, orderBy = "createdAt_desc", filterBy },
   { prisma, user },
   _info
 ) => {
@@ -11,11 +12,29 @@ export const getTasksByUser: QueryResolvers["getTasksByUser"] = async (
 
   const orderByObj = { [sort]: direction };
 
+  const shouldFilter = Object.keys(filterBy ?? {}).length > 0;
+
+  const filters: any[] = [];
+
+  const filterVals: Record<string, (val: any) => any> = {
+    title: (val: string) => ({
+      startsWith: `%${val}%`,
+    }),
+  };
+
+  if (shouldFilter) {
+    Object.keys(filterBy ?? {}).forEach((key: string) => {
+      filters.push({
+        [key]: filterVals[key]((filterBy as any)[key]),
+      });
+    });
+  }
+
   let conditions: any = {
     take: first + 1,
     orderBy: { ...orderByObj },
     where: {
-      AND: [{ userId: user.id }],
+      AND: [{ userId: user.id }, ...filters],
     },
   };
 
