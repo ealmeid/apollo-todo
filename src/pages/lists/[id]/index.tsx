@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Checkbox,
   LoadMoreButton,
@@ -12,8 +12,10 @@ import {
 } from "@/graphql/types/client";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
+import { useAuth } from "@clerk/nextjs";
 
 export const List: React.FC<any> = ({}) => {
+  const { isLoaded } = useAuth();
   const router = useRouter();
   const [editTask] = useEditTaskMutation();
   const [isOpen, setIsOpen] = useState(false);
@@ -24,16 +26,40 @@ export const List: React.FC<any> = ({}) => {
     <Loader2 className="animate-spin w-4 h-4" />;
   }
 
-  const { data, loading, error, fetchMore } = useGetListByIdWithTasksQuery({
-    variables: {
-      id: id as string,
-      first: 1,
-    },
-  });
+  const { data, loading, refetch, error, fetchMore } =
+    useGetListByIdWithTasksQuery({
+      variables: {
+        id: id as string,
+        first: 1,
+      },
+    });
+
+  useEffect(() => {
+    if (!data) {
+      refetch();
+    }
+  }, [data, isLoaded, refetch]);
+
+  const onFetchMore = useCallback(
+    () =>
+      fetchMore({
+        variables: {
+          id,
+          first: 1,
+          after: data?.getListById?.tasks?.pageInfo?.endCursor,
+        },
+      }),
+    [id, data, fetchMore]
+  );
 
   return (
     <div className="mt-24">
-      {/* <SelectModal open={isOpen} onClose={() => setIsOpen(false)} /> */}
+      <SelectModal
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        options={data?.getListById?.tasks?.edges.map(({ node }) => node) ?? []}
+        onLoadMore={onFetchMore}
+      />
       {loading && <Loader2 className="animate-spin w-4 h-4" />}
       {data && !error && (
         <div className="w-full max-w-[500px] m-auto flex flex-col gap-6">
@@ -82,6 +108,7 @@ export const List: React.FC<any> = ({}) => {
 
           {data?.getListById?.tasks?.pageInfo?.hasNextPage && (
             <LoadMoreButton
+              className="m-auto"
               onLoadMore={() =>
                 fetchMore({
                   variables: {
