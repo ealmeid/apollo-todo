@@ -112,25 +112,7 @@ export const Home = () => {
       <Text as="lead" className="text-center">
         Add, Edit, Manage, and Complete.
       </Text>
-      <div className="flex gap-2">
-        <Input
-          value={todoValue}
-          onChange={(e) => setTodoValue(e.currentTarget.value)}
-          placeholder="Pick up pasta..."
-        />
-        <Button
-          className="inline-flex animate-shimmer items-center justify-center rounded-md border bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
-          onClick={() => {
-            createTodo({
-              variables: {
-                title: todoValue,
-              },
-            });
-          }}
-        >
-          Add
-        </Button>
-      </div>
+
       {loading && (
         <div className="flex flex-col gap-4 max-w-[300px] w-full">
           {Array.from({ length: 3 }, (_, i) => (
@@ -148,7 +130,25 @@ export const Home = () => {
       />
 
       <div className="flex flex-col gap-4 max-w-[300px] w-full">
-        <Input placeholder="Search..." onChange={debouncedSetSearchTerm} />
+        <div className="flex gap-2">
+          <Input
+            value={todoValue}
+            onChange={(e) => setTodoValue(e.currentTarget.value)}
+            placeholder="Pick up pasta..."
+          />
+          <Button
+            className="inline-flex animate-shimmer items-center justify-center rounded-md border bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+            onClick={() => {
+              createTodo({
+                variables: {
+                  title: todoValue,
+                },
+              });
+            }}
+          >
+            Add
+          </Button>
+        </div>
         {!loading &&
           !error &&
           data &&
@@ -156,25 +156,33 @@ export const Home = () => {
             <Text as="p">No todos yet!</Text>
           ) : (
             <>
-              <Select onValueChange={(val) => setSortOrder(val as TaskOrderBy)}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort By" />
-                </SelectTrigger>
-                <SelectContent className="mr-auto">
-                  <SelectItem value={TaskOrderBy.CreatedatDesc}>
-                    <div className="flex items-center gap-2 mr-auto">
-                      <ArrowUp className="w-4 h-4" />
-                      Newest
-                    </div>
-                  </SelectItem>
-                  <SelectItem value={TaskOrderBy.CreatedatAsc}>
-                    <div className="flex items-center gap-2 mr-auto">
-                      <ArrowDown className="w-4 h-4" />
-                      Oldest
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex gap-4">
+                <Input
+                  placeholder="Search..."
+                  onChange={debouncedSetSearchTerm}
+                />
+                <Select
+                  onValueChange={(val) => setSortOrder(val as TaskOrderBy)}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Sort By" />
+                  </SelectTrigger>
+                  <SelectContent className="mr-auto">
+                    <SelectItem value={TaskOrderBy.CreatedatDesc}>
+                      <div className="flex items-center gap-2 mr-auto">
+                        <ArrowUp className="w-4 h-4" />
+                        Newest
+                      </div>
+                    </SelectItem>
+                    <SelectItem value={TaskOrderBy.CreatedatAsc}>
+                      <div className="flex items-center gap-2 mr-auto">
+                        <ArrowDown className="w-4 h-4" />
+                        Oldest
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               {/* <AnimatePresence mode="wait"> */}
               {data?.getTasksByUser?.edges.map(({ node: task }) => (
                 <MotionTaskCard
@@ -191,12 +199,8 @@ export const Home = () => {
                     });
                     setIsOpen(true);
                   }}
-                  // animate={{ scale: 1, opacity: 1 }}
-                  // exit={{ scale: 0.8, opacity: 0 }}
-                  // transition={{ type: "spring" }}
                 />
               ))}
-              {/* </AnimatePresence> */}
             </>
           ))}
       </div>
