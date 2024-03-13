@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
 import {
@@ -113,14 +112,6 @@ export const Home = () => {
         Add, Edit, Manage, and Complete.
       </Text>
 
-      {loading && (
-        <div className="flex flex-col gap-4 max-w-[300px] w-full">
-          {Array.from({ length: 3 }, (_, i) => (
-            <TaskCard.Skeleton key={i} />
-          ))}
-        </div>
-      )}
-
       <TaskModal
         id={currentTask.id}
         name={currentTask.title}
@@ -137,6 +128,7 @@ export const Home = () => {
             placeholder="Pick up pasta..."
           />
           <Button
+            disabled={!!error || loading || !todoValue}
             className="inline-flex animate-shimmer items-center justify-center rounded-md border bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
             onClick={() => {
               createTodo({
@@ -149,6 +141,15 @@ export const Home = () => {
             Add
           </Button>
         </div>
+
+        {loading && (
+          <div className="flex flex-col gap-4 max-w-[300px] w-full">
+            {Array.from({ length: 3 }, (_, i) => (
+              <TaskCard.Skeleton key={i} />
+            ))}
+          </div>
+        )}
+
         {!loading &&
           !error &&
           data &&
@@ -183,7 +184,6 @@ export const Home = () => {
                   </SelectContent>
                 </Select>
               </div>
-              {/* <AnimatePresence mode="wait"> */}
               {data?.getTasksByUser?.edges.map(({ node: task }) => (
                 <MotionTaskCard
                   layout
