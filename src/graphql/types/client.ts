@@ -15,6 +15,8 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /** DateTime custom scalar type */
+  DateTime: { input: any; output: any; }
 };
 
 export type EditListInput = {
@@ -31,11 +33,11 @@ export type EditTaskInput = {
 
 export type List = {
   __typename?: 'List';
-  createdAt: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   tasks?: Maybe<TaskConnection>;
   title: Scalars['String']['output'];
-  updatedAt: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 
@@ -247,7 +249,7 @@ export type GetListByIdWithTasksQueryVariables = Exact<{
 }>;
 
 
-export type GetListByIdWithTasksQuery = { __typename?: 'Query', getListById?: { __typename?: 'List', id: string, title: string, createdAt: string, tasks?: { __typename?: 'TaskConnection', edges: Array<{ __typename?: 'TaskEdge', node: { __typename?: 'Task', id: string, title: string, description: string, isCompleted: boolean } }>, pageInfo?: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null } | null } | null } | null };
+export type GetListByIdWithTasksQuery = { __typename?: 'Query', getListById?: { __typename?: 'List', id: string, title: string, createdAt: any, tasks?: { __typename?: 'TaskConnection', edges: Array<{ __typename?: 'TaskEdge', node: { __typename?: 'Task', id: string, title: string, description: string, isCompleted: boolean } }>, pageInfo?: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null } | null } | null } | null };
 
 
 export const CreateListDocument = gql`

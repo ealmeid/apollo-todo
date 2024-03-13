@@ -5,8 +5,8 @@ export const typeDefs = gql`
     id: ID!
     title: String!
     tasks(first: Int!, after: String): TaskConnection
-    createdAt: String!
-    updatedAt: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
   }
 
   input EditListInput {

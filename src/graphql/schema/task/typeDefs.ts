@@ -6,7 +6,7 @@ export const typeDefs = gql`
     title: String!
     description: String!
     isCompleted: Boolean!
-    createdAt: String!
+    createdAt: DateTime!
   }
 
   enum TaskOrderBy {
