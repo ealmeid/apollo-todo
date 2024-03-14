@@ -1,6 +1,5 @@
 import { QueryResolvers } from "@/graphql/types/server";
 import { encodeCursor, decodeCursor } from "../../../helpers";
-import { filter } from "lodash";
 
 export const getTasksByUser: QueryResolvers["getTasksByUser"] = async (
   _parent,

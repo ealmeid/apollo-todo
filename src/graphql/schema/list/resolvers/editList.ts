@@ -1,7 +1,7 @@
 import { MutationResolvers } from "@/graphql/types/server";
 import * as z from "zod";
 
-export const editList: MutationResolvers["editTask"] = async (
+export const editList: MutationResolvers["editList"] = async (
   _parent,
   { input },
   { prisma, user },

@@ -4,7 +4,7 @@ export const dateTimeResolver = new GraphQLScalarType({
   name: "DateTime",
   description: "DateTime custom scalar type",
   serialize(value) {
-    return value instanceof Date ? value.toISOString() : null;
+    return new Date(parseInt(value as string)).toISOString();
   },
   parseValue(value: unknown) {
     return new Date(value as string);

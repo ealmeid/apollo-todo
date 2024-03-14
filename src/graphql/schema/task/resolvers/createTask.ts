@@ -8,7 +8,7 @@ export const createTask: MutationResolvers["createTask"] = async (
 ) => {
   const { id: userId } = user;
 
-  const todo = await prisma.task.create({
+  const task = await prisma.task.create({
     data: {
       userId,
       title,
@@ -17,5 +17,5 @@ export const createTask: MutationResolvers["createTask"] = async (
     },
   });
 
-  return todo;
+  return task;
 };
