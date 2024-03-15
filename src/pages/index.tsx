@@ -24,7 +24,7 @@ import {
 } from "@/graphql/types/client";
 import { Task } from "@prisma/client";
 import { useAuth } from "@clerk/nextjs";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, LayoutList, XCircle } from "lucide-react";
 import { debounce } from "lodash";
 
 type GetTasksByUserData = NonNullable<
@@ -142,6 +142,15 @@ export const Home = () => {
           </Button>
         </div>
 
+        {error && (
+          <div className="flex items-center align-middle gap-4 justify-center p-4 border border-red-500 rounded-md">
+            <XCircle className="text-red-500" />
+            <Text as="p" className="text-red-500 !m-0">
+              An error as occurred
+            </Text>
+          </div>
+        )}
+
         {loading && (
           <div className="flex flex-col gap-4 max-w-[300px] w-full">
             {Array.from({ length: 3 }, (_, i) => (
@@ -154,7 +163,12 @@ export const Home = () => {
           !error &&
           data &&
           (data?.getTasksByUser?.edges.length === 0 ? (
-            <Text as="p">No todos yet!</Text>
+            <div className="flex gap-4 justify-center align-middle items-center border p-4 rounded-md">
+              <LayoutList className="w-4 h-4" />
+              <Text as="p" className="!m-0">
+                No tasks yet!
+              </Text>
+            </div>
           ) : (
             <>
               <div className="flex gap-4">
