@@ -10,9 +10,10 @@ import {
   useGetListByIdWithTasksQuery,
   useEditTaskMutation,
 } from "@/graphql/types/client";
-import { Loader2 } from "lucide-react";
+import { Calendar, Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useAuth } from "@clerk/nextjs";
+import dayjs from "dayjs";
 
 export const List: React.FC<any> = ({}) => {
   const { isLoaded } = useAuth();
@@ -64,6 +65,15 @@ export const List: React.FC<any> = ({}) => {
       {data && !error && (
         <div className="w-full max-w-[500px] m-auto flex flex-col gap-6">
           <Text as="h1">{data?.getListById?.title}</Text>
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4" />
+            <Text as="p" className="!m-0">
+              {dayjs(parseInt(data?.getListById?.createdAt ?? "")).format(
+                "MMMM D, YYYY"
+              )}
+            </Text>
+          </div>
+
           <Text as="muted">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero
             aliquid incidunt natus sint nemo error quasi consequuntur, explicabo
