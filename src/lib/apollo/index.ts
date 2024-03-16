@@ -13,7 +13,7 @@ export const createApolloClient = (
 ) => {
   const isProduction = process.env.NODE_ENV === "production";
   const rootUrl = isProduction
-    ? "http://apollo-todo.vercel.app"
+    ? "https://apollo-todo.vercel.app"
     : "http://localhost:3000";
 
   if (apolloClient) return apolloClient;
