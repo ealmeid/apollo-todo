@@ -134,7 +134,7 @@ export type QueryGetTasksByUserArgs = {
 
 export type Task = {
   __typename?: 'Task';
-  createdAt: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   isCompleted: Scalars['Boolean']['output'];
@@ -196,7 +196,7 @@ export type CreateTaskMutationVariables = Exact<{
 }>;
 
 
-export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, title: string, isCompleted: boolean, createdAt: string } };
+export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', id: string, title: string, isCompleted: boolean, createdAt: any } };
 
 export type DeleteTaskMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -240,7 +240,7 @@ export type GetTasksByUserQueryVariables = Exact<{
 }>;
 
 
-export type GetTasksByUserQuery = { __typename?: 'Query', getTasksByUser?: { __typename?: 'TaskConnection', edges: Array<{ __typename?: 'TaskEdge', node: { __typename?: 'Task', id: string, title: string, isCompleted: boolean, createdAt: string } }>, pageInfo?: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null } | null } | null };
+export type GetTasksByUserQuery = { __typename?: 'Query', getTasksByUser?: { __typename?: 'TaskConnection', edges: Array<{ __typename?: 'TaskEdge', node: { __typename?: 'Task', id: string, title: string, isCompleted: boolean, createdAt: any } }>, pageInfo?: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null } | null } | null };
 
 export type GetListByIdWithTasksQueryVariables = Exact<{
   id: Scalars['ID']['input'];
