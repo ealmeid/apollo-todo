@@ -68,9 +68,7 @@ export const List: React.FC<any> = ({}) => {
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4" />
             <Text as="p" className="!m-0">
-              {dayjs(parseInt(data?.getListById?.createdAt ?? "")).format(
-                "MMMM D, YYYY"
-              )}
+              {dayjs(data?.getListById?.createdAt ?? "").format("MMMM D, YYYY")}
             </Text>
           </div>
 
