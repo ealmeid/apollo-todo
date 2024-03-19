@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import Head from "next/head";
 import type { AppProps } from "next/app";
 import { Inter as FontSans } from "next/font/google";
 import { ApolloProvider } from "@apollo/client";
@@ -20,6 +21,9 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <ClerkProvider>
       <ApolloProvider client={client}>
+        <Head>
+          <title>apollo-todo</title>
+        </Head>
         <main
           className={cn(
             "p-8 h-screen bg-background font-sans antialiased",
