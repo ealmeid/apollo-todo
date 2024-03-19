@@ -34,11 +34,13 @@ model Task {
 }
 
 model List {
-  id        String   @id @default(uuid())
-  title     String
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id          String   @id @default(uuid())
+  title       String   @default("New List")
+  emoji       String   @default("🔥")
+  description String   @default("No description provided.")
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
 
   tasks TaskToList[]
   user  User         @relation(fields: [userId], references: [id])
