@@ -71,6 +71,7 @@ export const tasks: ListResolvers["tasks"] = async (
   }
 
   const tasksForList = listWithTasks.tasks.map(({ task }) => task);
+  const totalCount = await prisma.task.count({ where: { userId: user.id } });
 
   const hasNextPage = tasksForList.length > first;
 
@@ -93,5 +94,6 @@ export const tasks: ListResolvers["tasks"] = async (
       endCursor,
       hasNextPage: hasNextPage,
     },
+    totalCount,
   };
 };
