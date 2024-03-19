@@ -46,16 +46,11 @@ export const typeDefs = gql`
   type TaskConnection {
     edges: [TaskEdge!]!
     pageInfo: PageInfo
+    totalCount: Int!
   }
 
   type TaskEdge {
     node: Task!
     cursor: String!
-  }
-
-  type PageInfo {
-    startCursor: String
-    endCursor: String
-    hasNextPage: Boolean
   }
 `;

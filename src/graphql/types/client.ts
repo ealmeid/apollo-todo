@@ -145,6 +145,7 @@ export type TaskConnection = {
   __typename?: 'TaskConnection';
   edges: Array<TaskEdge>;
   pageInfo?: Maybe<PageInfo>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type TaskEdge = {
@@ -240,7 +241,7 @@ export type GetTasksByUserQueryVariables = Exact<{
 }>;
 
 
-export type GetTasksByUserQuery = { __typename?: 'Query', getTasksByUser?: { __typename?: 'TaskConnection', edges: Array<{ __typename?: 'TaskEdge', node: { __typename?: 'Task', id: string, title: string, isCompleted: boolean, createdAt: any } }>, pageInfo?: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null } | null } | null };
+export type GetTasksByUserQuery = { __typename?: 'Query', getTasksByUser?: { __typename?: 'TaskConnection', totalCount: number, edges: Array<{ __typename?: 'TaskEdge', node: { __typename?: 'Task', id: string, title: string, isCompleted: boolean, createdAt: any } }>, pageInfo?: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null } | null } | null };
 
 export type GetListByIdWithTasksQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -583,6 +584,7 @@ export const GetTasksByUserDocument = gql`
       endCursor
       hasNextPage
     }
+    totalCount
   }
 }
     `;

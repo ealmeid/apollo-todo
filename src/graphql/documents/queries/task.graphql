@@ -22,6 +22,7 @@ query GetTasksByUser(
       endCursor
       hasNextPage
     }
+    totalCount
   }
 }
 

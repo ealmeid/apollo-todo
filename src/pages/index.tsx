@@ -198,6 +198,10 @@ export const Home = () => {
                   </SelectContent>
                 </Select>
               </div>
+              <Text as="muted">
+                Showing {data?.getTasksByUser?.edges.length} of{" "}
+                {data?.getTasksByUser?.totalCount}
+              </Text>
               {data?.getTasksByUser?.edges.map(({ node: task }) => (
                 <MotionTaskCard
                   layout

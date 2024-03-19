@@ -145,6 +145,7 @@ export type TaskConnection = {
   __typename?: 'TaskConnection';
   edges: Array<TaskEdge>;
   pageInfo?: Maybe<PageInfo>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type TaskEdge = {
@@ -330,6 +331,7 @@ export type TaskResolvers<ContextType = ApolloContext, ParentType extends Resolv
 export type TaskConnectionResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['TaskConnection'] = ResolversParentTypes['TaskConnection']> = {
   edges?: Resolver<Array<ResolversTypes['TaskEdge']>, ParentType, ContextType>;
   pageInfo?: Resolver<Maybe<ResolversTypes['PageInfo']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

@@ -65,6 +65,7 @@ export const getTasksByUser: QueryResolvers["getTasksByUser"] = async (
   }
 
   const tasks = await prisma.task.findMany({ ...conditions });
+  const totalCount = await prisma.task.count({ where: { userId: user.id } });
 
   const edges = tasks.map((task) => ({
     node: { ...task, createdAt: task.createdAt.toISOString() },
@@ -82,5 +83,6 @@ export const getTasksByUser: QueryResolvers["getTasksByUser"] = async (
       endCursor,
       hasNextPage: hasNextPage,
     },
+    totalCount,
   };
 };
