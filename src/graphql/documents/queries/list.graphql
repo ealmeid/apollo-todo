@@ -2,5 +2,14 @@ query GetListsByUser {
   getListsByUser {
     id
     title
+    emoji
+    description
   }
 }
+
+# query GetListById($id: ID!) {
+#   getListById(id: $id) {
+#     id
+#     title
+#   }
+# }

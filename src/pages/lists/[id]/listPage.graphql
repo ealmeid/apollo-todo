@@ -2,6 +2,8 @@ query GetListByIdWithTasks($id: ID!, $first: Int!, $after: String) {
   getListById(id: $id) {
     id
     title
+    emoji
+    description
     createdAt
     tasks(first: $first, after: $after) {
       edges {

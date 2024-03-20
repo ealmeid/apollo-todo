@@ -20,6 +20,8 @@ export type Scalars = {
 };
 
 export type EditListInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  emoji?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   title?: InputMaybe<Scalars['String']['input']>;
 };
@@ -34,6 +36,8 @@ export type EditTaskInput = {
 export type List = {
   __typename?: 'List';
   createdAt: Scalars['DateTime']['output'];
+  description: Scalars['String']['output'];
+  emoji: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   tasks?: Maybe<TaskConnection>;
   title: Scalars['String']['output'];
@@ -287,6 +291,8 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 export type ListResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['List'] = ResolversParentTypes['List']> = {
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  emoji?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   tasks?: Resolver<Maybe<ResolversTypes['TaskConnection']>, ParentType, ContextType, RequireFields<ListTasksArgs, 'first'>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

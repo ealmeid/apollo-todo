@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   Checkbox,
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
   LoadMoreButton,
   SelectModal,
   Separator,
@@ -8,17 +13,21 @@ import {
 } from "@/components";
 import {
   useGetListByIdWithTasksQuery,
-  useEditTaskMutation,
+  useEditListMutation,
 } from "@/graphql/types/client";
 import { Calendar, Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useAuth } from "@clerk/nextjs";
 import dayjs from "dayjs";
+import { toast } from "sonner";
+
+const emojiOptions = ["👍", "👎", "👌", "🔥", "💯", "💥", "👻", "🫠", "😎"];
 
 export const List: React.FC<any> = ({}) => {
   const { isLoaded } = useAuth();
   const router = useRouter();
-  const [editTask] = useEditTaskMutation();
+  const [editList] = useEditListMutation();
+  const [isEmojiDrawerOpen, setIsEmojiDrawerOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const { id } = router.query;
@@ -27,19 +36,24 @@ export const List: React.FC<any> = ({}) => {
     <Loader2 className="animate-spin w-4 h-4" />;
   }
 
-  const { data, loading, refetch, error, fetchMore } =
-    useGetListByIdWithTasksQuery({
-      variables: {
-        id: id as string,
-        first: 1,
-      },
-    });
+  const {
+    data: listData,
+    loading,
+    refetch,
+    error,
+    fetchMore,
+  } = useGetListByIdWithTasksQuery({
+    variables: {
+      id: id as string,
+      first: 1,
+    },
+  });
 
   useEffect(() => {
-    if (!data) {
+    if (!listData) {
       refetch();
     }
-  }, [data, isLoaded, refetch]);
+  }, [listData, isLoaded, refetch]);
 
   const onFetchMore = useCallback(
     () =>
@@ -47,37 +61,85 @@ export const List: React.FC<any> = ({}) => {
         variables: {
           id,
           first: 1,
-          after: data?.getListById?.tasks?.pageInfo?.endCursor,
+          after: listData?.getListById?.tasks?.pageInfo?.endCursor,
         },
       }),
-    [id, data, fetchMore]
+    [id, listData, fetchMore]
   );
+
+  const list = listData?.getListById;
 
   return (
     <div className="mt-24">
       <SelectModal
         open={isOpen}
         onClose={() => setIsOpen(false)}
-        options={data?.getListById?.tasks?.edges.map(({ node }) => node) ?? []}
+        options={list?.tasks?.edges.map(({ node }) => node) ?? []}
         onLoadMore={onFetchMore}
       />
       {loading && <Loader2 className="animate-spin w-4 h-4" />}
-      {data && !error && (
+      {list && !error && !loading && (
         <div className="w-full max-w-[500px] m-auto flex flex-col gap-6">
-          <Text as="h1">{data?.getListById?.title}</Text>
+          <div className="relative">
+            <div className="w-full rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-500 h-[100px]"></div>
+            <Drawer open={isEmojiDrawerOpen}>
+              <DrawerTrigger onClick={() => setIsEmojiDrawerOpen(true)}>
+                <div className="text-4xl hover:bg-gray-300 p-1 px-2 rounded-md cursor-pointer absolute bottom-2 translate-y-2 translate-x-4">
+                  {list?.emoji}
+                </div>
+              </DrawerTrigger>
+              <DrawerContent
+                className="flex items-center my-8"
+                onBlur={() => setIsEmojiDrawerOpen(false)}
+              >
+                <DrawerHeader className="mb-4">
+                  <DrawerTitle>
+                    Select an emoji to represent your list
+                  </DrawerTitle>
+                </DrawerHeader>
+                <div className="grid grid-cols-6 gap-4">
+                  {emojiOptions.map((emoji) => (
+                    <div
+                      key={emoji}
+                      onClick={() => {
+                        editList({
+                          variables: {
+                            input: {
+                              id: list?.id,
+                              emoji,
+                            },
+                          },
+                          onCompleted: () => {
+                            setIsEmojiDrawerOpen(false);
+                            toast.success("List updated!");
+                          },
+                          optimisticResponse: {
+                            editList: {
+                              ...list,
+                              emoji,
+                            },
+                          },
+                        });
+                      }}
+                      className="cursor-pointer text-3xl hover:bg-gray-300 p-2 rounded-md"
+                    >
+                      {emoji}
+                    </div>
+                  ))}
+                </div>
+              </DrawerContent>
+            </Drawer>
+          </div>
+          <div className="flex items-center gap-2">
+            <Text as="h1">{list?.title}</Text>
+          </div>
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4" />
             <Text as="p" className="!m-0">
-              {dayjs(data?.getListById?.createdAt ?? "").format("MMMM D, YYYY")}
+              {dayjs(list?.createdAt ?? "").format("MMMM D, YYYY")}
             </Text>
           </div>
-
-          <Text as="muted">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero
-            aliquid incidunt natus sint nemo error quasi consequuntur, explicabo
-            neque aperiam eveniet placeat aliquam, non ducimus praesentium id
-            assumenda tempora optio.
-          </Text>
+          <Text as="muted">{list?.description}</Text>
           <Separator className="my-2" />
           <div className="flex justify-between items-end gap-8">
             <Text as="h4">Tasks</Text>
@@ -88,10 +150,12 @@ export const List: React.FC<any> = ({}) => {
               Select
             </p>
           </div>
-          {data?.getListById?.tasks?.edges.length === 0 && (
+
+          {list?.tasks?.edges.length === 0 && (
             <Text as="muted">No tasks found</Text>
           )}
-          {data?.getListById?.tasks?.edges.map(({ node: task }) => (
+
+          {list?.tasks?.edges.map(({ node: task }) => (
             <div
               key={task.id}
               className="flex items-center rounded-md bg-slate-100 px-4 p-2 gap-4 max-w-[50%] border"
@@ -99,22 +163,12 @@ export const List: React.FC<any> = ({}) => {
               <Checkbox
                 className="w-5 h-5"
                 checked={task.isCompleted}
-                onClick={(e) => {
-                  editTask({
-                    variables: {
-                      input: {
-                        id: task.id,
-                        isCompleted: !task.isCompleted,
-                      },
-                    },
-                  });
-                }}
+                onClick={(e) => {}}
               />
               <div>{task.title}</div>
             </div>
           ))}
-
-          {data?.getListById?.tasks?.pageInfo?.hasNextPage && (
+          {list?.tasks?.pageInfo?.hasNextPage && (
             <LoadMoreButton
               className="m-auto"
               onLoadMore={() =>
@@ -122,7 +176,7 @@ export const List: React.FC<any> = ({}) => {
                   variables: {
                     id,
                     first: 1,
-                    after: data?.getListById?.tasks?.pageInfo?.endCursor,
+                    after: list?.tasks?.pageInfo?.endCursor,
                   },
                 })
               }

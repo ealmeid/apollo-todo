@@ -12,6 +12,8 @@ export const editList: MutationResolvers["editList"] = async (
 
   const inputSchema = z.object({
     title: z.string().min(4).optional(),
+    description: z.string().min(4).optional(),
+    emoji: z.string().min(1).optional(),
   });
 
   const validatedInput = inputSchema.parse(dataToUpdate);

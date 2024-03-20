@@ -9,6 +9,8 @@ mutation EditList($input: EditListInput!) {
   editList(input: $input) {
     id
     title
+    emoji
+    description
   }
 }
 

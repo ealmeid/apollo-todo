@@ -20,6 +20,8 @@ export type Scalars = {
 };
 
 export type EditListInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  emoji?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   title?: InputMaybe<Scalars['String']['input']>;
 };
@@ -34,6 +36,8 @@ export type EditTaskInput = {
 export type List = {
   __typename?: 'List';
   createdAt: Scalars['DateTime']['output'];
+  description: Scalars['String']['output'];
+  emoji: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   tasks?: Maybe<TaskConnection>;
   title: Scalars['String']['output'];
@@ -183,7 +187,7 @@ export type EditListMutationVariables = Exact<{
 }>;
 
 
-export type EditListMutation = { __typename?: 'Mutation', editList: { __typename?: 'List', id: string, title: string } };
+export type EditListMutation = { __typename?: 'Mutation', editList: { __typename?: 'List', id: string, title: string, emoji: string, description: string } };
 
 export type DeleteListMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -231,7 +235,7 @@ export type CreateUserMutation = { __typename?: 'Mutation', createUser?: { __typ
 export type GetListsByUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetListsByUserQuery = { __typename?: 'Query', getListsByUser: Array<{ __typename?: 'List', id: string, title: string }> };
+export type GetListsByUserQuery = { __typename?: 'Query', getListsByUser: Array<{ __typename?: 'List', id: string, title: string, emoji: string, description: string }> };
 
 export type GetTasksByUserQueryVariables = Exact<{
   first: Scalars['Int']['input'];
@@ -250,7 +254,7 @@ export type GetListByIdWithTasksQueryVariables = Exact<{
 }>;
 
 
-export type GetListByIdWithTasksQuery = { __typename?: 'Query', getListById?: { __typename?: 'List', id: string, title: string, createdAt: any, tasks?: { __typename?: 'TaskConnection', edges: Array<{ __typename?: 'TaskEdge', node: { __typename?: 'Task', id: string, title: string, description: string, isCompleted: boolean } }>, pageInfo?: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null } | null } | null } | null };
+export type GetListByIdWithTasksQuery = { __typename?: 'Query', getListById?: { __typename?: 'List', id: string, title: string, emoji: string, description: string, createdAt: any, tasks?: { __typename?: 'TaskConnection', edges: Array<{ __typename?: 'TaskEdge', node: { __typename?: 'Task', id: string, title: string, description: string, isCompleted: boolean } }>, pageInfo?: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage?: boolean | null } | null } | null } | null };
 
 
 export const CreateListDocument = gql`
@@ -292,6 +296,8 @@ export const EditListDocument = gql`
   editList(input: $input) {
     id
     title
+    emoji
+    description
   }
 }
     `;
@@ -529,6 +535,8 @@ export const GetListsByUserDocument = gql`
   getListsByUser {
     id
     title
+    emoji
+    description
   }
 }
     `;
@@ -629,6 +637,8 @@ export const GetListByIdWithTasksDocument = gql`
   getListById(id: $id) {
     id
     title
+    emoji
+    description
     createdAt
     tasks(first: $first, after: $after) {
       edges {
