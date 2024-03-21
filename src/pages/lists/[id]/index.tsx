@@ -1,15 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   Checkbox,
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
   LoadMoreButton,
   SelectModal,
   Separator,
   Text,
+  EmojiDrawer,
 } from "@/components";
 import {
   useGetListByIdWithTasksQuery,
@@ -21,14 +17,11 @@ import { useAuth } from "@clerk/nextjs";
 import dayjs from "dayjs";
 import { toast } from "sonner";
 
-const emojiOptions = ["👍", "👎", "👌", "🔥", "💯", "💥", "👻", "🫠", "😎"];
-
-export const List: React.FC<any> = ({}) => {
-  const { isLoaded } = useAuth();
+export const List: React.FC<any> = () => {
   const router = useRouter();
-  const [editList] = useEditListMutation();
-  const [isEmojiDrawerOpen, setIsEmojiDrawerOpen] = useState(false);
+  const { isLoaded } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [editList] = useEditListMutation();
 
   const { id } = router.query;
 
@@ -82,60 +75,38 @@ export const List: React.FC<any> = ({}) => {
         <div className="w-full max-w-[500px] m-auto flex flex-col gap-6">
           <div className="relative">
             <div className="w-full rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-500 h-[100px]"></div>
-            <Drawer open={isEmojiDrawerOpen}>
-              <DrawerTrigger onClick={() => setIsEmojiDrawerOpen(true)}>
-                <div className="text-4xl hover:bg-gray-300 p-1 px-2 rounded-md cursor-pointer absolute bottom-2 translate-y-2 translate-x-4">
-                  {list?.emoji}
-                </div>
-              </DrawerTrigger>
-              <DrawerContent
-                className="flex items-center my-8"
-                onBlur={() => setIsEmojiDrawerOpen(false)}
-              >
-                <DrawerHeader className="mb-4">
-                  <DrawerTitle>
-                    Select an emoji to represent your list
-                  </DrawerTitle>
-                </DrawerHeader>
-                <div className="grid grid-cols-6 gap-4">
-                  {emojiOptions.map((emoji) => (
-                    <div
-                      key={emoji}
-                      onClick={() => {
-                        editList({
-                          variables: {
-                            input: {
-                              id: list?.id,
-                              emoji,
-                            },
-                          },
-                          onCompleted: () => {
-                            setIsEmojiDrawerOpen(false);
-                            toast.success("List updated!");
-                          },
-                          optimisticResponse: {
-                            editList: {
-                              ...list,
-                              emoji,
-                            },
-                          },
-                        });
-                      }}
-                      className="cursor-pointer text-3xl hover:bg-gray-300 p-2 rounded-md"
-                    >
-                      {emoji}
-                    </div>
-                  ))}
-                </div>
-              </DrawerContent>
-            </Drawer>
+            <EmojiDrawer
+              currentEmoji={list?.emoji}
+              onSelect={(emoji, close) => {
+                editList({
+                  variables: {
+                    input: {
+                      id: list?.id,
+                      emoji,
+                    },
+                  },
+                  onCompleted: () => {
+                    close();
+                    toast.success(`Emoji updated to ${emoji}!`);
+                  },
+                  optimisticResponse: {
+                    editList: {
+                      ...list,
+                      emoji,
+                    },
+                  },
+                });
+              }}
+            />
           </div>
           <div className="flex items-center gap-2">
-            <Text as="h1">{list?.title}</Text>
+            <Text as="h1" className="!text-4xl">
+              {list?.title}
+            </Text>
           </div>
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
-            <Text as="p" className="!m-0">
+          <div className="flex items-center gap-1">
+            <Calendar className="w-3 h-3 text-gray-500" />
+            <Text as="muted" className="!m-0">
               {dayjs(list?.createdAt ?? "").format("MMMM D, YYYY")}
             </Text>
           </div>
@@ -160,11 +131,7 @@ export const List: React.FC<any> = ({}) => {
               key={task.id}
               className="flex items-center rounded-md bg-slate-100 px-4 p-2 gap-4 max-w-[50%] border"
             >
-              <Checkbox
-                className="w-5 h-5"
-                checked={task.isCompleted}
-                onClick={(e) => {}}
-              />
+              <Checkbox className="w-5 h-5" checked={task.isCompleted} />
               <div>{task.title}</div>
             </div>
           ))}
