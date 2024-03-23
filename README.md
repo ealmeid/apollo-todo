@@ -23,9 +23,18 @@
 
 <br />
 
-<div style="display: flex; flex-direction: row; grid-gap: 6px;"> 
-    <img src="public/image.png" style="border-radius: 8px" width="50%" />
-    <img src="public/image-1.png" style="border-radius: 8px" width="50%" />
+<table align="center">
+    <tr>
+        <td height="150px">
+            <img src="public/image.png" />
+        </td>
+        <td height="150px">
+            <img src="public/image-1.png" />
+        </td>
+    </tr>
+</table>
+
+<div align="center" display="flex"> 
 </div>
 
 ## Table of Contents
